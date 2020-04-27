@@ -33,7 +33,7 @@
         <!-- Recorremos la lista de usuarios -->
         {% for usuario in usuarios %}
         <tr>
-            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.nombre }} {{ usuario.apellidos }}</td>
             <td>{{ usuario.email }}</td>
             <td>
                 <a href="/usuario/{{ usuario._id.toString() }}">Agregar</a>
