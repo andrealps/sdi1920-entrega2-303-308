@@ -15,22 +15,32 @@ module.exports = function (app, swig, gestorBD) {
         if (req.body.password != req.body.passwordConfirm) {
             res.redirect("/registrarse?mensaje=Las contraseñas no coinciden&tipoMensaje=alert-danger");
         } else {
-            // Encriptación de la contraseña
-            let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
-                .update(req.body.password).digest('hex');
-            // Creamos el usuario que meteremos en la BD
-            let usuario = {
-                nombre: req.body.nombre,
-                apellidos: req.body.apellidos,
-                email: req.body.email,
-                password: seguro
+            // Comprobamos que el email no se encuentre registrado
+            let criterio = {
+                email: req.body.email
             };
-            // Insertamos el usuario
-            gestorBD.insertarUsuario(usuario, function (id) {
-                if (id == null) {
-                    res.redirect("/registrarse?mensaje=Error al registrar usuario&tipoMensaje=alert-danger");
+            gestorBD.obtenerUsuarios(criterio, function (usuario) {
+                if (usuario != null) {
+                    res.redirect("/registrarse?mensaje=El email ya está en uso&tipoMensaje=alert-danger");
                 } else {
-                    res.redirect("/identificarse?mensaje=Nuevo usuario registrado&tipoMensaje=alert-success");
+                    // Encriptación de la contraseña
+                    let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
+                        .update(req.body.password).digest('hex');
+                    // Creamos el usuario que meteremos en la BD
+                    let usuario = {
+                        nombre: req.body.nombre,
+                        apellidos: req.body.apellidos,
+                        email: req.body.email,
+                        password: seguro
+                    };
+                    // Insertamos el usuario
+                    gestorBD.insertarUsuario(usuario, function (id) {
+                        if (id == null) {
+                            res.redirect("/registrarse?mensaje=Error al registrar usuario&tipoMensaje=alert-danger");
+                        } else {
+                            res.redirect("/identificarse?mensaje=Nuevo usuario registrado&tipoMensaje=alert-success");
+                        }
+                    });
                 }
             });
         }
