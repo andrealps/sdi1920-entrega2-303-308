@@ -27,11 +27,21 @@ module.exports = function (app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                res.send(app.renderView("views/blistaUsuarios.html", req.session, {
-                    usuarios: usuarios,
-                    paginas: paginas,
-                    actual: pg
-                }));
+                let criterio = {
+                    email: req.session.usuario
+                };
+                gestorBD.obtenerUsuarios(criterio, function (usuario) {
+                    if (usuario == null) {
+                        res.send("Error al obtener la lista de usuarios");
+                    } else {
+                        res.send(app.renderView("views/blistaUsuarios.html", req.session, {
+                            usuarios: usuarios,
+                            paginas: paginas,
+                            actual: pg,
+                            rol: usuario[0].rol
+                        }));
+                    }
+                });
             }
         });
     });
