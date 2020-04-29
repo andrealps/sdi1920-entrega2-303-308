@@ -20,7 +20,7 @@ module.exports = function (app, swig, gestorBD) {
                 email: req.body.email
             };
             gestorBD.obtenerUsuarios(criterio, function (usuario) {
-                if (usuario != null) {
+                if (usuario.length != 0) {
                     res.redirect("/registrarse?mensaje=El email ya está en uso&tipoMensaje=alert-danger");
                 } else {
                     // Encriptación de la contraseña
