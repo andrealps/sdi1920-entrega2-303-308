@@ -69,3 +69,10 @@ https.createServer({
 }, app).listen(app.get('port'), function () {
     console.log("Servidor activo");
 });
+
+// Renderiza las vistas pasándoles el usuario en sesión
+app.renderView = (view, session, respuesta) => {
+    respuesta = respuesta ? respuesta: {};
+    respuesta.usuario = session.usuario;
+    return swig.renderFile(view, respuesta);
+};

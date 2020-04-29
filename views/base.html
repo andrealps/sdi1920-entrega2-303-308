@@ -40,8 +40,12 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                {% if usuario == null %}
                 <li><a href="/registrarse"><span class="glyphicon glyphicon-user" id="iconoNav"></span>Regístrate</a></li>
                 <li><a href="/identificarse"><span class="glyphicon glyphicon-log-in" id="iconoNav"></span>Identifícate</a></li>
+                {% else %}
+                <li><a href="/desconectarse"><span class="glyphicon glyphicon-log-in" id="iconoNav"></span>Desconectar</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

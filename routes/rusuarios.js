@@ -27,12 +27,11 @@ module.exports = function (app, swig, gestorBD) {
                         paginas.push(i);
                     }
                 }
-                let respuesta = swig.renderFile('views/blistaUsuarios.html', {
+                res.send(app.renderView("views/blistaUsuarios.html", req.session, {
                     usuarios: usuarios,
                     paginas: paginas,
                     actual: pg
-                });
-                res.send(respuesta);
+                }));
             }
         });
     });
