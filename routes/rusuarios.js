@@ -6,7 +6,11 @@ module.exports = function (app, swig, gestorBD) {
         // Búsqueda
         let criterio = {};
         if (req.query.busqueda != null) {
-            criterio = {"nombre": {$regex: ".*" + req.query.busqueda + ".*"}};
+            criterio = {
+                $or: [{"nombre": {$regex: ".*" + req.query.busqueda + ".*"}},
+                    {"apellidos": {$regex: ".*" + req.query.busqueda + ".*"}},
+                    {"email": {$regex: ".*" + req.query.busqueda + ".*"}}]
+            };
         }
         let pg = parseInt(req.query.pg); // Es String !!!
         if (req.query.pg == null) { // Puede no venir el param
@@ -17,8 +21,8 @@ module.exports = function (app, swig, gestorBD) {
             if (usuarios == null) {
                 res.send("Error al listar ");
             } else {
-                let ultimaPg = total / 4;
-                if (total % 4 > 0) { // Sobran decimales
+                let ultimaPg = total / 5;
+                if (total % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
                 let paginas = []; // paginas mostrar
