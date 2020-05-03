@@ -73,7 +73,7 @@ public class Tests {
 		// Rellenamos el formulario.
 		PO_RegisterView.fillForm(driver, "maria@gmail.com", "María", "Pérez Álvarez", "77777", "77777");
 		// Comprobamos que nos redirige al formulario de login
-		SeleniumUtils.textoPresentePagina(driver, "Iniciar sesión");
+		PO_View.checkElement(driver, "id", "loginUsuarios");
 
 	}
 
@@ -88,7 +88,7 @@ public class Tests {
 		// Rellenamos el formulario.
 		PO_RegisterView.fillForm(driver, "", "", "", "77777", "77777");
 		// Comprobamos que seguimos en el registro
-		SeleniumUtils.textoPresentePagina(driver, "Registrar usuario");
+		PO_View.checkElement(driver, "id", "registroUsuarios");
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class Tests {
 		// Rellenamos el formulario.
 		PO_RegisterView.fillForm(driver, "a@h.com", "Ejemplo", "Ejemplo2", "77777", "77771");
 		// Comprobamos que seguimos en el registro
-		SeleniumUtils.textoPresentePagina(driver, "Registrar usuario");
+		PO_View.checkElement(driver, "id", "registroUsuarios");
 		// Comprobamos el error de contraseña inválida
 		SeleniumUtils.textoPresentePagina(driver, "Las contraseñas no coinciden");
 	}
@@ -118,33 +118,66 @@ public class Tests {
 		// Rellenamos el formulario.
 		PO_RegisterView.fillForm(driver, "ejemplo1@gmail.com", "Ejemplo", "Ejemplo2", "77777", "77777");
 		// Comprobamos que seguimos en el registro
-		SeleniumUtils.textoPresentePagina(driver, "Registrar usuario");
-		// Comprobamos el error de email repetido
+		PO_View.checkElement(driver, "id", "registroUsuarios");
+		// Comprobamos el error de email repetido		
 		SeleniumUtils.textoPresentePagina(driver, "El email ya está en uso");
 	}
 
-	// PR05. Sin hacer /
+	/**
+	 * [Prueba5] Inicio de sesión con datos válidos (usuario estándar)
+	 */
 	@Test
 	public void PR05() {
-		assertTrue("PR05 sin hacer", false);
+		// Vamos al formulario de inicio de sesión
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		// Rellenamos el formulario.
+		PO_LoginView.fillForm(driver, "ejemplo1@gmail.com", "1234");
+		// Comprobamos que nos redirige al listado de usuarios
+		PO_View.checkElement(driver, "id", "listaUsuarios");
 	}
 
-	// PR06. Sin hacer /
+	/**
+	 * [Prueba6] Inicio de sesión con datos inválidos (usuario estándar, campo email
+	 * y contraseña vacíos).
+	 */
 	@Test
 	public void PR06() {
-		assertTrue("PR06 sin hacer", false);
+		// Vamos al formulario de inicio de sesión
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		// Dejamos el formulario vacío
+		PO_LoginView.fillForm(driver, "", "");
+		// Comprobamos que no iniciamos sesión
+		PO_View.checkElement(driver, "id", "loginUsuarios");
 	}
 
-	// PR07. Sin hacer /
+	/**
+	 * [Prueba7] Inicio de sesión con datos válidos (usuario estándar, email
+	 * existente, pero contraseña incorrecta).
+	 */
 	@Test
 	public void PR07() {
-		assertTrue("PR07 sin hacer", false);
+		// Vamos al formulario de inicio de sesión
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		// Rellenamos el formulario.
+		PO_LoginView.fillForm(driver, "ejemplo1@gmail.com", "aaaaa");
+		// Comprobamos que no iniciamos sesión (se muestra mensaje de error)
+		PO_View.checkElement(driver, "id", "loginUsuarios");
+		SeleniumUtils.textoPresentePagina(driver, "Email o password incorrecto");
 	}
 
-	// PR08. Sin hacer /
+	/**
+	 * [Prueba8] Inicio de sesión con datos inválidos (usuario estándar, email no
+	 * existente y contraseña no vacía).
+	 */
 	@Test
 	public void PR08() {
-		assertTrue("PR08 sin hacer", false);
+		// Vamos al formulario de inicio de sesión
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
+		// Rellenamos el formulario.
+		PO_LoginView.fillForm(driver, "noexistente@gmail.com", "1234");
+		// Comprobamos que no iniciamos sesión (se muestra mensaje de error)
+		PO_View.checkElement(driver, "id", "loginUsuarios");
+		SeleniumUtils.textoPresentePagina(driver, "Email o password incorrecto");
 	}
 
 	// PR09. Sin hacer /
