@@ -57,6 +57,7 @@ app.set('crypto',crypto);
 //Rutas/controladores por lógica
 require("./routes/rusuarios.js")(app, swig, gestorBD);
 require("./routes/rlogUsuarios")(app, swig, gestorBD);
+require("./routes/rdatosPruebas")(app, swig, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/listaUsuarios');
