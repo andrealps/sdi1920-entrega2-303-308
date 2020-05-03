@@ -119,7 +119,7 @@ public class Tests {
 		PO_RegisterView.fillForm(driver, "ejemplo1@gmail.com", "Ejemplo", "Ejemplo2", "77777", "77777");
 		// Comprobamos que seguimos en el registro
 		PO_View.checkElement(driver, "id", "registroUsuarios");
-		// Comprobamos el error de email repetido		
+		// Comprobamos el error de email repetido
 		SeleniumUtils.textoPresentePagina(driver, "El email ya está en uso");
 	}
 
@@ -180,22 +180,49 @@ public class Tests {
 		SeleniumUtils.textoPresentePagina(driver, "Email o password incorrecto");
 	}
 
-	// PR09. Sin hacer /
+	/**
+	 * [Prueba9] Hacer click en la opción de salir de sesión y comprobar que se
+	 * redirige a la página de inicio de sesión (Login).
+	 */
 	@Test
 	public void PR09() {
-		assertTrue("PR09 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
+		// Salimos de sesión
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
+		// Comprobamos que estamos en la página de login
+		PO_HomeView.clickOption(driver, "identificarse", "class", "btn btn-primary");
 	}
 
-	// PR10. Sin hacer /
+	/**
+	 * [Prueba10] Comprobar que el botón cerrar sesión no está visible si el usuario
+	 * no está autenticado.
+	 */
 	@Test
 	public void PR10() {
-		assertTrue("PR10 sin hacer", false);
+		// Comprobamos que el botón de cerrar sesión no está disponible al no tener la
+		// sesión iniciada
+		SeleniumUtils.textoNoPresentePagina(driver, "Desconectar");
 	}
 
-	// PR11. Sin hacer /
+	/**
+	 * [Prueba11] Mostrar el listado de usuarios y comprobar que se muestran todos
+	 * los que existen en el sistema
+	 */
 	@Test
 	public void PR11() {
-		assertTrue("PR11 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
+		// Nos redirige a la lista de usuarios. Se cargan todos los usuarios
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		assertTrue(elementos.size() == 5);
+		// Nos vamos a la siguiente página
+		elementos = PO_View.checkElement(driver, "free", "//a[contains(@class, 'page-link')]");
+		elementos.get(1).click();
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		assertTrue(elementos.size() == 3);
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
 	// PR12. Sin hacer /
