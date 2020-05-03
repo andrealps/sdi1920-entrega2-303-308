@@ -57,6 +57,13 @@ module.exports = function (app, swig, gestorBD) {
                         "email": "ejemplo7@gmail.com",
                         "password": "353f9f25a52fbbe951bc1176019b58d9a7dd04b3094bc0334115862118846098",
                         "rol": "estandar"
+                    },
+                    {
+                        "nombre": "admin",
+                        "apellidos": "",
+                        "email": "admin@email.com",
+                        "password": "admin",
+                        "rol": "admin"
                     }
                 ];
                 // Insertamos nuevos usuarios para pruebas

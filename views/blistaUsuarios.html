@@ -9,7 +9,7 @@
                 <input type="text" class="search-query form-control"
                        placeholder="Buscar por nombre, apellidos o email" name="busqueda"/>
                 <span class="input-group-btn">
-                    <button class="btn" type="submit">
+                    <button class="btn" type="submit" id="btnSearch">
                     <span class="glyphicon glyphicon-search"></span>
                     </button>
                 </span>
@@ -35,9 +35,11 @@
         <tr>
             <td>{{ usuario.nombre }} {{ usuario.apellidos }}</td>
             <td>{{ usuario.email }}</td>
+            {% if rol == "estandar" %}
             <td>
                 <a type="button" class="btn btn-info" href="/usuario/{{ usuario._id.toString() }}">Agregar</a>
             </td>
+            {% endif %}
         </tr>
         {% endfor %}
         <!-- Fin del bucle -->

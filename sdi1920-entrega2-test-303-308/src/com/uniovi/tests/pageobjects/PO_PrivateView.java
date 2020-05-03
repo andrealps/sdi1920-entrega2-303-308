@@ -1,11 +1,14 @@
 package com.uniovi.tests.pageobjects;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 public class PO_PrivateView extends PO_NavView {
 
 	/**
 	 * Inicia la sesión de un usuario (datos correctos)
+	 * 
 	 * @param driver
 	 * @param email
 	 * @param pass
@@ -17,6 +20,21 @@ public class PO_PrivateView extends PO_NavView {
 		PO_LoginView.fillForm(driver, email, pass);
 		// Comprobamos que nos redirige al listado de usuarios
 		PO_View.checkElement(driver, "id", "listaUsuarios");
+	}
+
+	/**
+	 * Realiza una búsqueda en la lista de usuarios de la aplicación
+	 * 
+	 * @param driver
+	 */
+	static public void search(WebDriver driver, String text) {
+		WebElement texto = driver.findElement(By.name("busqueda"));
+		texto.click();
+		texto.clear();
+		texto.sendKeys(text);
+
+		By boton = By.id("btnSearch");
+		driver.findElement(boton).click();
 	}
 
 }

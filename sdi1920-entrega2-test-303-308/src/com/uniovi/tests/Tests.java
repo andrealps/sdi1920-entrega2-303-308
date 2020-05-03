@@ -220,27 +220,79 @@ public class Tests {
 		elementos = PO_View.checkElement(driver, "free", "//a[contains(@class, 'page-link')]");
 		elementos.get(1).click();
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
-		assertTrue(elementos.size() == 3);
+		assertTrue(elementos.size() == 2);
 		// Nos desconectamos
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// PR12. Sin hacer /
+	/**
+	 * [Prueba12] Hacer una búsqueda con el campo vacío y comprobar que se muestra
+	 * la página que corresponde con el listado usuarios existentes en el sistema.
+	 */
 	@Test
 	public void PR12() {
-		assertTrue("PR12 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
+		// Nos redirige a la lista de usuarios. Hacemos una búsqueda con campo vacío
+		PO_PrivateView.search(driver, "");
+		// Se cargan todos los usuarios
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		assertTrue(elementos.size() == 5);
+		// Nos vamos a la siguiente página
+		elementos = PO_View.checkElement(driver, "free", "//a[contains(@class, 'page-link')]");
+		elementos.get(1).click();
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		assertTrue(elementos.size() == 2);
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// PR13. Sin hacer /
+	/**
+	 * [Prueba13] Hacer una búsqueda escribiendo en el campo un texto que no exista
+	 * y comprobar que se muestra la página que corresponde, con la lista de
+	 * usuarios vacía.
+	 */
+
 	@Test
 	public void PR13() {
-		assertTrue("PR13 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
+		// Nos redirige a la lista de usuarios. Hacemos una búsqueda con campo vacío
+		PO_PrivateView.search(driver, "prueba");
+		// Y esperamos a que NO aparezca nada
+		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "@gmail.com", PO_View.getTimeout());
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// PR14. Sin hacer /
+	/**
+	 * [Prueba14] Hacer una búsqueda con un texto específico y comprobar que se
+	 * muestra la página que corresponde, con la lista de usuarios en los que el
+	 * texto especificados sea parte de su nombre, apellidos o de su email.
+	 */
 	@Test
 	public void PR14() {
-		assertTrue("PR14 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
+		// Nos redirige a la lista de usuarios
+		
+		// BUSQUEDA POR NOMBRE
+		PO_PrivateView.search(driver, "Sam");
+		// Comprobamos que aparece el usuario que corresponde
+		PO_View.checkElement(driver, "text", "ejemplo2@gmail.com");
+		
+		// BUSQUEDA POR APELLIDOS
+		PO_PrivateView.search(driver, "Shan");
+		// Comprobamos que aparece el usuario que corresponde
+		PO_View.checkElement(driver, "text", "ejemplo4@gmail.com");
+		
+		// BUSQUEDA POR EMAIL
+		PO_PrivateView.search(driver, "ejemplo4");
+		// Comprobamos que aparece el usuario que corresponde
+		PO_View.checkElement(driver, "text", "Nadia");
+		
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
 	// PR15. Sin hacer /
