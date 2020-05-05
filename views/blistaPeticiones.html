@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% block titulo %} Lista de usuarios {% endblock %}
+{% block titulo %} Peticiones de amistad {% endblock %}
 {% block contenido_principal %}
 <!-- Búsqueda -->
 <div class="row">
     <div id="custom-search-input ">
-        <form method="get" action="/listaUsuarios">
+        <form method="get" action="/listFriendRequests">
             <div class="input-group col-xs-8 col-sm-6 col-md-4 col-lg-5 pull-right">
                 <input type="text" class="search-query form-control"
-                       placeholder="Buscar por nombre, apellidos o email" name="busqueda"/>
+                       placeholder="Buscar por nombre o apellidos" name="busqueda"/>
                 <span class="input-group-btn">
                     <button class="btn" type="submit" id="btnSearch">
                     <span class="glyphicon glyphicon-search"></span>
@@ -18,28 +18,26 @@
     </div>
 </div>
 
-<h2>Lista de usuarios</h2>
-<p>Los usuarios que actualmente figuran en el sistema son los siguientes:</p>
-<div class="table-responsive" id="listaUsuarios">
+<h2>Peticiones de amistad</h2>
+<p>Tiene las siguientes peticiones de amistad:</p>
+<div class="table-responsive">
     <table class="table table-hover">
         <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th class="col-md-1"></th>
-        </tr>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th class="col-md-1"></th>
+            </tr>
         </thead>
         <tbody>
         <!-- Recorremos la lista de usuarios -->
         {% for usuario in usuarios %}
         <tr>
-            <td>{{ usuario.nombre }} {{ usuario.apellidos }}</td>
-            <td>{{ usuario.email }}</td>
-            {% if rol == "estandar" %}
+            <td>{{ usuario.nombre }} </td>
+            <td>{{ usuario.apellidos }}</td>
             <td>
-                <a type="button" class="btn btn-info" href="/friendRequest/send/{{ usuario._id.toString() }}">Agregar</a>
+                <a type="button" class="btn btn-info" href="/usuario/{{ usuario._id.toString() }}">Aceptar</a>
             </td>
-            {% endif %}
         </tr>
         {% endfor %}
         <!-- Fin del bucle -->
@@ -52,7 +50,7 @@
     <ul class="pagination">
         {% for pagina in paginas %}
         <li class="page-item" id="pi-{{pagina}}">
-            <a class="page-link" href="/listaUsuarios?pg={{pagina}}">{{pagina}}</a>
+            <a class="page-link" href="/listRequests?pg={{pagina}}">{{pagina}}</a>
         </li>
         {% endfor %}
         <script>

@@ -74,6 +74,8 @@ routerUsuarioSession.use(function (req, res, next) {
 
 //Aplicar routerUsuarioSession
 app.use("/listaUsuarios", routerUsuarioSession);
+app.use("/usuario/friendRequest", routerUsuarioSession);
+app.use("/listFriendRequests", routerUsuarioSession);
 
 // Declaración del directorio public como estático
 app.use(express.static('public'));
@@ -88,6 +90,7 @@ app.set('crypto', crypto);
 require("./routes/rusuarios.js")(app, swig, gestorBD);
 require("./routes/rlogUsuarios")(app, swig, gestorBD);
 require("./routes/rdatosPruebas")(app, swig, gestorBD);
+require("./routes/rpeticiones.js")(app, swig, gestorBD);
 require("./routes/rapiLogUsuarios.js")(app, gestorBD);
 
 app.get('/', function (req, res) {
