@@ -59,6 +59,7 @@ routerUsuarioToken.use(function (req, res, next) {
 // Aplicar routerUsuarioToken
 app.use('/api/usuario', routerUsuarioToken);
 app.use('/api/mensaje', routerUsuarioToken);
+app.use('/api/chat/:otherUser', routerUsuarioToken);
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
@@ -93,6 +94,7 @@ require("./routes/rlogUsuarios")(app, swig, gestorBD);
 require("./routes/rdatosPruebas")(app, swig, gestorBD);
 require("./routes/rpeticiones.js")(app, swig, gestorBD);
 require("./routes/rapiLogUsuarios.js")(app, gestorBD);
+require("./routes/rapiChat.js")(app, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/listaUsuarios');

@@ -47,6 +47,7 @@ module.exports = {
             }
         });
     },
+
     // INSERTAR USUARIO
 
     insertarUsuario: function (usuario, funcionCallback) {
