@@ -5,7 +5,7 @@ module.exports = {
         this.mongo = mongo;
         this.app = app;
     },
-    // OBTENER LISTAS DE ELEMENTOS
+    // OBTENER USUARIOS
 
     obtenerUsuarios: function (criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
@@ -24,6 +24,9 @@ module.exports = {
             }
         });
     },
+
+    // OBTENER USUARIOS PAGINADOS
+
     obtenerUsuariosPg: function (criterio, pg, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -44,7 +47,7 @@ module.exports = {
             }
         });
     },
-    // INSERTAR ELEMENTOS
+    // INSERTAR USUARIO
 
     insertarUsuario: function (usuario, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
@@ -63,6 +66,8 @@ module.exports = {
             }
         });
     },
+    // INSERTAR USUARIOS
+
     insertarListaUsuarios: function (usuarios, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
@@ -80,7 +85,31 @@ module.exports = {
             }
         });
     },
-    // ELIMINAR ELEMENTOS
+    // INSERTAR MENSAJE
+
+    insertarMensaje: function (criterio, mensaje, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('friends');
+                collection.update(criterio, {
+                    $push: {
+                        chat: mensaje
+                    }
+                }, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
+    // ELIMINAR USUARIO
 
     eliminarUsuarios: function (funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
@@ -140,4 +169,44 @@ module.exports = {
         });
     },
 
+    // OBTENER AMISTADES
+
+    obtenerAmistades: function (criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('friends');
+                collection.find(criterio).toArray(function (err, friends) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(friends);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
+    /*
+    // PARA UN FUTURO MÉTODO GENÉRICO
+    obtenerElementos: function (nombreColeccion, criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection(nombreColeccion);
+                collection.find(criterio).toArray(function (err, lista) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(lista);
+                    }
+                    db.close();
+                });
+            }
+        });
+    }
+    */
 };

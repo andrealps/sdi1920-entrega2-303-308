@@ -35,10 +35,46 @@ module.exports = function (app, gestorBD) {
                 res.status(200);
                 res.json({
                     autenticado: true,
-                    token : token
+                    token: token
                 })
             }
         });
+    });
 
+    /**
+     * S3 - Usuario identificado: Crear un mensaje
+     */
+    app.post("/api/mensaje", function (req, res) {
+        // Buscamos la amistad en la base de datos
+        let criterio = {
+            $or: [
+                {usuario1: res.usuario, usuario2: req.body.userTo},
+                {usuario1: req.body.userTo, usuario2: res.usuario}
+            ]
+        };
+        // Comprobamos que son amigos
+        gestorBD.obtenerAmistades(criterio, function (friends) {
+            if (friends == null || friends.length === 0) {
+                res.status(500);
+                res.json({
+                    error: "Error, no eres amigo del usuario " + req.body.userTo
+                })
+            } else {
+                // Creamos el mensaje y lo insertamos en el chat
+                var mensaje = {
+                    emisor: res.usuario,
+                    texto: req.body.texto,
+                    fecha: Date.now(),
+                    leido: false
+                };
+                criterio = {"_id": friends[0]._id};
+                gestorBD.insertarMensaje(criterio, mensaje, function (result) {
+                    res.status(200);
+                    res.json({
+                        mensaje: "Mensaje insertado"
+                    })
+                })
+            }
+        });
     });
 };
