@@ -20,6 +20,7 @@ module.exports = function (app, gestorBD) {
             } else {
                 // Creamos el mensaje y lo insertamos en el chat
                 var mensaje = {
+                    //numero_mensaje: friends.chat.length + 1,
                     emisor: res.usuario,
                     texto: req.body.texto,
                     fecha: Date.now(),
