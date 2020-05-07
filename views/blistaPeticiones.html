@@ -36,7 +36,7 @@
             <td>{{ usuario.nombre }} </td>
             <td>{{ usuario.apellidos }}</td>
             <td>
-                <a type="button" class="btn btn-info" href="/usuario/{{ usuario._id.toString() }}">Aceptar</a>
+                <a type="button" class="btn btn-info" href="/friendRequest/accept/{{ usuario.email }}">Aceptar</a>
             </td>
         </tr>
         {% endfor %}

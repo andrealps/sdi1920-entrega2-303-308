@@ -37,7 +37,7 @@
             <td>{{ usuario.email }}</td>
             {% if rol == "estandar" %}
             <td>
-                <a type="button" class="btn btn-info" href="/friendRequest/send/{{ usuario._id.toString() }}">Agregar</a>
+                <a type="button" class="btn btn-info" href="/friendRequest/send/{{ usuario.email }}">Agregar</a>
             </td>
             {% endif %}
         </tr>

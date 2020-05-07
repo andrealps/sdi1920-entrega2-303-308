@@ -3,12 +3,14 @@ module.exports = function (app, swig, gestorBD) {
     /**
      * Enviar peticion de amistad
      */
-    app.get("/friendRequest/send/:id", function (req, res) {
-        let userTo = gestorBD.mongo.ObjectID(req.params.id);
+    app.get("/friendRequest/send/:email", function (req, res) {
+
         let friendRequest = {
             userFrom: req.session.usuario,
-            userTo: userTo
+            userTo: req.params.email,
+            accepted: false
         };
+        console.log(friendRequest);
         gestorBD.insertarPeticion(friendRequest, function (idFriendRequest) {
             if (idFriendRequest == null) {
                 res.send(respuesta);
@@ -22,30 +24,66 @@ module.exports = function (app, swig, gestorBD) {
      * Lista las peticiones de amistad del usuario en sesion
      */
     app.get("/listFriendRequests", function (req, res) {
-        let criterio = {email: req.session.usuario};
-        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+        let criterio = {$and: [{userTo: req.session.usuario}, {accepted: false}]};
 
-            // Busco las peticiones dirigidas al usuario en sesion
-            let criterioPeticion = {userTo: usuarios[0]._id};
+        gestorBD.obtenerPeticiones(criterio, function (peticiones) {
+            console.log(peticiones);
+            if (peticiones == null) {
+                res.send("Error al listar");
+            } else {
+                let peticionesEmail = [];
+                for (i = 0; i < peticiones.length; i++) {
+                    peticionesEmail.push(peticiones[i].userFrom);
+                }
 
-            gestorBD.obtenerPeticiones(criterioPeticion, function (peticiones) {
-                if (peticiones == null) {
-                    res.send("Error al listar");
-                } else {
-                    let peticionesIds = [];
-                    for (i = 0; i < peticiones.length; i++) {
-                        peticionesIds.push(peticiones[i].userFrom);
-                    }
+                let criterio = {"email": {$in: peticionesEmail}};
+                gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+                    let respuesta = swig.renderFile('views/blistaPeticiones.html', {
+                        usuarios: usuarios
+                    });
+                    res.send(respuesta);
+                })
+            }
+        })
+    });
 
-                    let criterio = {"email": {$in: peticionesIds}};
-                    gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-                        let respuesta = swig.renderFile('views/blistaPeticiones.html', {
-                            usuarios: usuarios
-                        });
-                        res.send(respuesta);
+    /**
+     * Aceptar petición de amistad
+     */
+    app.get("/friendRequest/accept/:email", function (req, res) {
+
+        // Busco la peticion para marcarla a aceptada
+        let criterio = {$and: [{userFrom: req.params.email}, {userTo: req.session.usuario}, {accepted: false}]};
+        console.log(criterio);
+
+        gestorBD.obtenerPeticiones(criterio, function (peticiones) {
+            let criterio = {"_id": peticiones[0]};
+            let update = {accepted: true};
+            console.log(peticiones[0]);
+
+            gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
+                if (requestAccepted == null)
+                    res.send("Error al añadir amigo");
+                else {
+                    // Se crea la amistad
+                    let friendship = {
+                        userFrom: req.params.email,
+                        userTo: req.session.usuario
+                    };
+                    gestorBD.insertarAmistad(friendship, function (friends) {
+                        if (!friends) {
+                            res.send("There was an error adding");
+                        } else {
+                            res.redirect("/listFriendRequests" +
+                                "?mensaje=¡Petición aceptada!" +
+                                "&tipoMensaje=alert-success ");
+                        }
                     })
                 }
-            });
+
+            })
         })
-    })
+
+
+    });
 };
