@@ -52,7 +52,11 @@
     <ul class="pagination">
         {% for pagina in paginas %}
         <li class="page-item" id="pi-{{pagina}}">
+            {% if busqueda != null %}
+            <a class="page-link" href="/listaUsuarios?pg={{pagina}}&busqueda={{busqueda}}">{{pagina}}</a>
+            {% else %}
             <a class="page-link" href="/listaUsuarios?pg={{pagina}}">{{pagina}}</a>
+            {% endif %}
         </li>
         {% endfor %}
         <script>
