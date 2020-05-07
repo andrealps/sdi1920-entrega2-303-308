@@ -88,21 +88,18 @@ module.exports = {
     },
     // INSERTAR MENSAJE
 
-    insertarMensaje: function (criterio, mensaje, funcionCallback) {
+    insertarMensaje: function (mensaje, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
-                let collection = db.collection('friends');
-                collection.update(criterio, {
-                    $push: {
-                        chat: mensaje
-                    }
-                }, function (err, result) {
+                // Creamos un mensaje y lo añadimos a la colección chats
+                let collection = db.collection('chats');
+                collection.insert(mensaje, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {
-                        funcionCallback(result);
+                        funcionCallback(result.ops[0]._id);
                     }
                     db.close();
                 });
@@ -189,8 +186,6 @@ module.exports = {
             }
         });
     },
-
-    /*
     // PARA UN FUTURO MÉTODO GENÉRICO
     obtenerElementos: function (nombreColeccion, criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
@@ -209,5 +204,4 @@ module.exports = {
             }
         });
     }
-    */
 };

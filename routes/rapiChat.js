@@ -22,15 +22,15 @@ module.exports = function (app, gestorBD) {
                 var mensaje = {
                     //numero_mensaje: friends.chat.length + 1,
                     emisor: res.usuario,
+                    receptor: req.body.userTo,
                     texto: req.body.texto,
                     fecha: Date.now(),
                     leido: false
                 };
-                criterio = {"_id": friends[0]._id};
-                gestorBD.insertarMensaje(criterio, mensaje, function (result) {
+                gestorBD.insertarMensaje(mensaje, function (result) {
                     res.status(200);
                     res.json({
-                        mensaje: "Mensaje insertado"
+                        mensaje: "Mensaje " + result + " insertado"
                     })
                 })
             }
@@ -56,12 +56,27 @@ module.exports = function (app, gestorBD) {
                     error: "Error, los usuarios no son amigos"
                 })
             } else {
+                criterio = {
+                    $or: [
+                        {emisor: res.usuario, receptor: req.params.otherUser},
+                        {emisor: req.params.otherUser, receptor: res.usuario}
+                    ]
+                };
                 // Obtenemos los mensajes del chat entre ellos
-                res.status(200);
-                res.json({
-                    mensajes: friends[0].chat
+                gestorBD.obtenerElementos('chats', criterio, function (chats) {
+                    if (chats == null) {
+                        res.status(500);
+                        res.json({
+                            error: "Error al buscar los chats"
+                        })
+                    } else {
+                        res.status(200);
+                        res.json({
+                            mensajes: chats
+                        });
+                        //res.send(JSON.stringify(friends[0].chat));
+                    }
                 });
-                //res.send(JSON.stringify(friends[0].chat));
             }
         });
     });
