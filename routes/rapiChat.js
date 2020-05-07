@@ -80,4 +80,46 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
+
+    /**
+     * S5 - Usuario identificado: Marcar mensaje como leído
+     */
+    app.put("/api/chat/leer/:id", function (req, res) {
+        let criterio = {_id: gestorBD.mongo.ObjectID(req.params.id)};
+
+        // Buscamos el mensaje en la base de datos
+        gestorBD.obtenerElementos('chats', criterio, function (mensajes) {
+            if (mensajes == null || mensajes.length === 0) {
+                res.status(500);
+                res.json({
+                    error: "Error, el mensaje no existe"
+                })
+            } else {
+                // Comprobamos que el usuario sea el receptor del mensaje
+                if (res.usuario !== mensajes[0].receptor) {
+                    res.status(500);
+                    res.json({
+                        error: "Error, el usuario no es el receptor del mensaje"
+                    })
+                } else {
+                    let mensaje = {leido: true};
+                    // Marcamos el mensaje como leído
+                    gestorBD.modificarElemento('chats', criterio, mensaje, function (chats) {
+                        if (chats == null) {
+                            res.status(500);
+                            res.json({
+                                error: "Error al buscar los chats"
+                            })
+                        } else {
+                            res.status(200);
+                            res.json({
+                                mensaje: "Mensaje modificado"
+                            });
+                            //res.send(JSON.stringify(friends[0].chat));
+                        }
+                    });
+                }
+            }
+        });
+    });
 };

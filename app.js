@@ -70,6 +70,7 @@ routerUsuarioToken.use(function (req, res, next) {
 app.use('/api/usuario', routerUsuarioToken);
 app.use('/api/mensaje', routerUsuarioToken);
 app.use('/api/chat/:otherUser', routerUsuarioToken);
+app.use('/api/chat/leer/:idMensaje', routerUsuarioToken);
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
