@@ -174,6 +174,8 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 let collection = db.collection('friendRequests');
+                console.log(criterio);
+                console.log(update);
                 collection.update(criterio, {$set: update}, function(err, result) {
                     if (err) {
                         funcionCallback(null);
@@ -226,6 +228,7 @@ module.exports = {
             }
         });
     },
+
     // PARA UN FUTURO MÉTODO GENÉRICO
     obtenerElementos: function (nombreColeccion, criterio, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {

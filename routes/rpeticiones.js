@@ -10,7 +10,7 @@ module.exports = function (app, swig, gestorBD) {
             userTo: req.params.email,
             accepted: false
         };
-        console.log(friendRequest);
+
         gestorBD.insertarPeticion(friendRequest, function (idFriendRequest) {
             if (idFriendRequest == null) {
                 res.send(respuesta);
@@ -27,7 +27,6 @@ module.exports = function (app, swig, gestorBD) {
         let criterio = {$and: [{userTo: req.session.usuario}, {accepted: false}]};
 
         gestorBD.obtenerPeticiones(criterio, function (peticiones) {
-            console.log(peticiones);
             if (peticiones == null) {
                 res.send("Error al listar");
             } else {
@@ -54,12 +53,10 @@ module.exports = function (app, swig, gestorBD) {
 
         // Busco la peticion para marcarla a aceptada
         let criterio = {$and: [{userFrom: req.params.email}, {userTo: req.session.usuario}, {accepted: false}]};
-        console.log(criterio);
 
         gestorBD.obtenerPeticiones(criterio, function (peticiones) {
-            let criterio = {"_id": peticiones[0]};
+            let criterio = {"_id": peticiones[0]._id};
             let update = {accepted: true};
-            console.log(peticiones[0]);
 
             gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
                 if (requestAccepted == null)
@@ -67,15 +64,15 @@ module.exports = function (app, swig, gestorBD) {
                 else {
                     // Se crea la amistad
                     let friendship = {
-                        userFrom: req.params.email,
-                        userTo: req.session.usuario
+                        friend1: req.params.email,
+                        friend2: req.session.usuario
                     };
                     gestorBD.insertarAmistad(friendship, function (friends) {
                         if (!friends) {
                             res.send("There was an error adding");
                         } else {
                             res.redirect("/listFriendRequests" +
-                                "?mensaje=¡Petición aceptada!" +
+                                "?mensaje=¡Tienes un nuevo amigo!" +
                                 "&tipoMensaje=alert-success ");
                         }
                     })
@@ -84,6 +81,36 @@ module.exports = function (app, swig, gestorBD) {
             })
         })
 
+    });
 
+    /**
+     * Ver mis amigos
+     */
+    app.get("/myFriends", function (req, res) {
+
+        // Busco las amistades en las que aparezca el usuario en sesion
+        let criterio = {$or: [{friend1: req.session.usuario}, {friend2: req.session.usuario}]};
+
+        gestorBD.obtenerAmistades(criterio, function (amistades) {
+            if (amistades == null) {
+                res.send("Error al listar");
+            } else {
+                let friends = [];
+                for (i = 0; i < amistades.length; i++) {
+                    if (amistades[i].friend1 == req.session.usuario)
+                        friends.push(amistades[i].friend2);
+                    else if (amistades[i].friend2 == req.session.usuario)
+                        friends.push(amistades[i].friend1);
+                }
+
+                let criterio = {"email": {$in: friends}};
+                gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+                    let respuesta = swig.renderFile('views/blistaAmigos.html', {
+                        usuarios: usuarios
+                    });
+                    res.send(respuesta);
+                })
+            }
+        })
     });
 };
