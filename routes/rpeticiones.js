@@ -50,30 +50,40 @@ module.exports = function (app, swig, gestorBD) {
     /**
      * Aceptar petición de amistad
      */
-    /*app.get("/friendRequest/accept/:id", function (req, res) {
+    app.get("/friendRequest/accept/:email", function (req, res) {
 
-        let criterio = {email: req.session.usuario};
-        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+        // Busco la peticion para marcarla a aceptada
+        let criterio = {$and: [{userFrom: req.params.email}, {userTo: req.session.usuario}, {accepted: false}]};
+        console.log(criterio);
 
-            // Busco las peticiones del usuario en sesiion
-            let criterioUserTo = {
-                userTo: usuarios[0]._id
-            };
-            
-            gestorBD.obtenerPeticiones(criterioUserTo, function (peticiones) {
+        gestorBD.obtenerPeticiones(criterio, function (peticiones) {
+            let criterio = {"_id": peticiones[0]};
+            let update = {accepted: true};
+            console.log(peticiones[0]);
 
-                // Busco la peticion que se acaba de aceptar
-                let criterioPeticion = {
-                    user: usuarios[0]._id,
-                    friendId: gestorBD.mongo.ObjectID(req.params.id)
-                };
-                console.log(criterioPeticion);
-
-
+            gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
+                if (requestAccepted == null)
+                    res.send("Error al añadir amigo");
+                else {
+                    // Se crea la amistad
+                    let friendship = {
+                        userFrom: req.params.email,
+                        userTo: req.session.usuario
+                    };
+                    gestorBD.insertarAmistad(friendship, function (friends) {
+                        if (!friends) {
+                            res.send("There was an error adding");
+                        } else {
+                            res.redirect("/listFriendRequests" +
+                                "?mensaje=¡Petición aceptada!" +
+                                "&tipoMensaje=alert-success ");
+                        }
+                    })
+                }
 
             })
-            
-        });
+        })
 
-    });*/
+
+    });
 };
