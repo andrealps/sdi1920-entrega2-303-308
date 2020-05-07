@@ -6,8 +6,8 @@ module.exports = function (app, gestorBD) {
         // Buscamos la amistad en la base de datos
         let criterio = {
             $or: [
-                {usuario1: res.usuario, usuario2: req.body.userTo},
-                {usuario1: req.body.userTo, usuario2: res.usuario}
+                {userFrom: res.usuario, userTo: req.body.userTo},
+                {userFrom: req.body.userTo, userTo: res.usuario}
             ]
         };
         // Comprobamos que son amigos
@@ -44,8 +44,8 @@ module.exports = function (app, gestorBD) {
         // Buscamos la amistad en la base de datos
         let criterio = {
             $or: [
-                {usuario1: res.usuario, usuario2: req.params.otherUser},
-                {usuario1: req.params.otherUser, usuario2: res.usuario}
+                {userFrom: res.usuario, userTo: req.params.otherUser},
+                {userFrom: req.params.userTo, userTo: res.usuario}
             ]
         };
         // Comprobamos que son amigos
