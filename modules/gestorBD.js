@@ -170,6 +170,27 @@ module.exports = {
         });
     },
 
+    // INSERTAR AMISTAD
+
+    insertarAmistad: function (friendship, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('friends');
+                collection.insert(friendship, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
+
     // OBTENER AMISTADES
 
     obtenerAmistades: function (criterio, funcionCallback) {
