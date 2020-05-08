@@ -1,28 +1,36 @@
 <div class="chat">
+    <!-- Nombre y apellidos del amigo seleccionado -->
     <div class="chat-header clearfix">
         <div class="chat-about">
             <div class="chat-with">Vincent Porter</div>
         </div>
-    </div> <!-- end chat-header -->
+    </div>
 
+    <!-- Chat -->
     <div class="chat-history">
         <ul>
+            <!-- Mensaje enviado por nosotros -->
             <li class="clearfix">
                 <div class="message-data align-right">
+                    <!-- Fecha -->
                     <span class="message-data-time">10:10 AM, Today</span> &nbsp; &nbsp;
-
+                    <!-- Leído o enviado -->
+                    <span class="message-data-leido">leído <i class="fa fa-check leido"></i></span>
                 </div>
-                <div class="message other-message float-right">
-                    Hi Vincent, how are you? How is the project coming along?
+                <!-- Texto del mensaje en sí -->
+                <div class="message my-message float-right">
+                    Hola buenasssssssssss :)
                 </div>
             </li>
 
+            <!-- Mensaje enviado por el amigo -->
             <li>
                 <div class="message-data">
                     <span class="message-data-name">Vincent</span>
                     <span class="message-data-time">10:12 AM, Today</span>
+                    <!-- Aquí no aparece ni leido ni enviado al ser de la otra persona -->
                 </div>
-                <div class="message my-message">
+                <div class="message other-message">
                     Are we meeting today? Project has been already finished and I have results to show you.
                 </div>
             </li>
@@ -30,10 +38,9 @@
             <li class="clearfix">
                 <div class="message-data align-right">
                     <span class="message-data-time">10:14 AM, Today</span> &nbsp; &nbsp;
-                    <span class="message-data-name">Olia</span>
-
+                    <span class="message-data-leido">leído <i class="fa fa-check leido"></i></span>
                 </div>
-                <div class="message other-message float-right">
+                <div class="message my-message float-right">
                     Well I am not sure. The rest of the team is not here yet. Maybe in an hour or so? Have you
                     faced any problems at the last phase of the project?
                 </div>
@@ -44,22 +51,27 @@
                     <span class="message-data-name">Vincent</span>
                     <span class="message-data-time">10:20 AM, Today</span>
                 </div>
-                <div class="message my-message">
+                <div class="message other-message">
                     Actually everything was fine. I'm very excited to show this to our team.
                 </div>
             </li>
 
-            <li>
-                <div class="message-data">
-                    <span class="message-data-name">Vincent</span>
-                    <span class="message-data-time">10:31 AM, Today</span>
+            <li class="clearfix">
+                <div class="message-data align-right">
+                    <span class="message-data-time">10:50 AM, Today</span> &nbsp; &nbsp;
+                    <span class="message-data-leido">enviado <i class="fa fa-check enviado"></i></span>
+                </div>
+                <div class="message my-message float-right">
+                    Prueba de mensaje
                 </div>
             </li>
         </ul>
     </div> <!-- end chat-history -->
 
     <div class="chat-message clearfix">
+        <!-- Textarea con el mensaje a enviar -->
         <textarea name="message-to-send" id="message-to-send" placeholder="Type your message" rows="1"></textarea>
+        <!-- Botón para enviar el mensaje -->
         <button id="sendMessage">Send</button>
 
     </div> <!-- end chat-message -->
