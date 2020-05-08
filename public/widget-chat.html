@@ -92,6 +92,7 @@
             success: function (respuesta) {
                 mensajes = respuesta.mensajes;
                 $("#nameSurnameFriendSelected").val(amigoSeleccionado.nombre + amigoSeleccionado.apellidos);
+                marcarComoLeidosNuevos(mensajes, respuesta.usuario);
                 actualizarMensajes(mensajes, respuesta.usuario);
             },
             error: function (error) {
@@ -121,6 +122,34 @@
             }
         });
         //}
+    }
+
+    // Marca un mensaje como leído
+    function marcarComoLeido(id) {
+        $.ajax({
+            url: URLbase + "/api/chat/leer/" + id,
+            type: "PUT",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                //cargarMensajes(amigoSeleccionado);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+    // Comprueba si tenemos mensajes recibidos sin leer para marcarlos como leídos
+    function marcarComoLeidosNuevos(mensajes, usuario) {
+        for (let i = 0; i < mensajes.length; i++) {
+            // Si emisor = usuario con el que hablamos y el mensaje está como no leído
+            if (mensaje[i].emisor === amigoSeleccionado.email && mensaje[i].receptor === usuario.email
+                && mensajes[i].leido === false) {
+                marcarComoLeido(mensajes[i]._id);
+            }
+        }
     }
 
     // Actualiza los mensajes
