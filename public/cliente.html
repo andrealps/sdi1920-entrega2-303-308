@@ -48,6 +48,8 @@
     var token;
     var URLbase = "https://localhost:8081/api";
 
+    var amigoSeleccionado;
+
     function widgetChat() {
         $("#friendsList").load("widget-friends.html");
         $("#chatFriend").load("widget-chat.html");
@@ -65,11 +67,10 @@
         if (w == "login") {
             $("#contenedor-principal").load("widget-login.html");
         }
-        if (w == "chat") {
+        if (w == "friends") {
             $("#friendsList").load("widget-friends.html");
-            $("#chatFriend").load("widget-chat.html");
+            //$("#chatFriend").load("widget-chat.html");
         }
-
     }
 </script>
 
