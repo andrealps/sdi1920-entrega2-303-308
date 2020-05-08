@@ -70,9 +70,9 @@
 
     <div class="chat-message clearfix">
         <!-- Textarea con el mensaje a enviar -->
-        <textarea name="message-to-send" id="message-to-send" placeholder="Escribe un mensaje" rows="1"></textarea>
+        <textarea name="message-to-send" id="inputMensaje" placeholder="Escribe un mensaje" rows="1"></textarea>
         <!-- Botón para enviar el mensaje -->
-        <button id="sendMessage">Send</button>
+        <button id="sendMessage" onclick="crearMensaje()">Send</button>
 
     </div> <!-- end chat-message -->
 
@@ -84,14 +84,14 @@
     // Busca los mensajes en la BD y los actualiza
     function cargarMensajes() {
         $.ajax({
-            url: URLbase + "/api/chat/" + amigoSeleccionado.email,
+            url: URLbase + "/chat/" + amigoSeleccionado.email,
             type: "GET",
             data: {},
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
                 mensajes = respuesta.mensajes;
-                $("#nameSurnameFriendSelected").val(amigoSeleccionado.nombre + amigoSeleccionado.apellidos);
+                $("#nameSurnameFriendSelected").text(amigoSeleccionado.nombre + " " + amigoSeleccionado.apellidos);
                 marcarComoLeidosNuevos(mensajes, respuesta.usuario);
                 actualizarMensajes(mensajes, respuesta.usuario);
             },
@@ -106,11 +106,11 @@
         // Comprobamos que no se intente mandar un mensaje vacío
         //if ($("#message-to-send").val() !== null && $("#message-to-send").val().length !== 0) {
         $.ajax({
-            url: URLbase + "/api/mensaje",
+            url: URLbase + "/mensaje",
             type: "POST",
             data: {
                 userTo: amigoSeleccionado.email,
-                texto: $("#message-to-send").val()
+                texto: $("#inputMensaje").val()
             },
             dataType: 'json',
             headers: {"token": token},
@@ -127,7 +127,7 @@
     // Marca un mensaje como leído
     function marcarComoLeido(id) {
         $.ajax({
-            url: URLbase + "/api/chat/leer/" + id,
+            url: URLbase + "/chat/leer/" + id,
             type: "PUT",
             data: {},
             dataType: 'json',
@@ -145,7 +145,7 @@
     function marcarComoLeidosNuevos(mensajes, usuario) {
         for (let i = 0; i < mensajes.length; i++) {
             // Si emisor = usuario con el que hablamos y el mensaje está como no leído
-            if (mensaje[i].emisor === amigoSeleccionado.email && mensaje[i].receptor === usuario.email
+            if (mensajes[i].emisor === amigoSeleccionado.email && mensajes[i].receptor === usuario.email
                 && mensajes[i].leido === false) {
                 marcarComoLeido(mensajes[i]._id);
             }
@@ -156,42 +156,43 @@
     function actualizarMensajes(mensajes, usuario) {
         // Vaciamos la lista de mensajes
         $("#messagesList").empty();
-        for (let i = 0; i < mensajes.length; i++) {
-            let chat = "";
+
+        for (i = 0; i < mensajes.length; i++) {
+            var chat = "";
 
             // Nuestro mensaje
             if (usuario === mensajes[i].emisor) {
-                chat.concat("<li class=\"clearfix\">");
-                chat.concat("<div class=\"message-data align-right\">");
+                chat += "<li class=\"clearfix\">";
+                chat += "<div class=\"message-data align-right\">";
             }
             // El del otro usuario
             else {
-                chat.concat("<li>");
-                chat.concat("<div class=\"message-data\">");
-                chat.concat("<span class=\"message-data-name\">" + amigoSeleccionado.nombre + "</span>");
+                chat += "<li>";
+                chat += "<div class=\"message-data\">";
+                chat += "<span class=\"message-data-name\">" + amigoSeleccionado.nombre + "</span>";
             }
 
             // Fecha y hora
-            chat.concat("<span class=\"message-data-time\">" + mensajes[i].fecha + "</span> &nbsp; &nbsp;");
+            chat += "<span class=\"message-data-time\">" + formatDate(mensajes[i].fecha) + "</span> &nbsp; &nbsp;";
 
             // Leído o enviado solo si el usuario es el emisor
             if (usuario === mensajes[i].emisor) {
                 mensajes[i].leido === true ?
-                    chat.concat("<span class=\"message-data-leido\">leído <i class=\"fa fa-check leido\"></i></span>")
-                    : chat.concat("<span class=\"message-data-leido\">enviado <i class=\"fa fa-check enviado\"></i></span>");
+                    chat += "<span class=\"message-data-leido\">leído <i class=\"fa fa-check leido\"></i></span>"
+                    : chat += "<span class=\"message-data-leido\">enviado <i class=\"fa fa-check enviado\"></i></span>";
             }
-            chat.concat("</div>");
+            chat += "</div>";
 
             // Texto del mensaje en sí
             if (usuario === mensajes[i].emisor) {
-                chat.concat("<div class=\"message my-message float-right\">" + mensajes[i].texto + "</div>");
+                chat += "<div class=\"message my-message float-right\">" + mensajes[i].texto + "</div>";
             }
             // El del otro usuario
             else {
-                chat.concat("<div class=\"message other-message\">" + mensajes[i].texto + "</div>");
+                chat += "<div class=\"message other-message\">" + mensajes[i].texto + "</div>";
             }
 
-            chat.concat("</li>");
+            chat += "</li>";
 
             $("#messagesList").append(
                 chat
@@ -203,4 +204,10 @@
     setInterval(function () {
         cargarMensajes(amigoSeleccionado);
     }, 1000);
+
+    function formatDate(date) {
+        let newDate = new Date(date);
+        return newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + ", a las "
+            + newDate.getHours() + ":" + newDate.getMinutes();
+    }
 </script>

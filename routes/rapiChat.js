@@ -30,7 +30,7 @@ module.exports = function (app, gestorBD) {
                         emisor: res.usuario,
                         receptor: req.body.userTo,
                         texto: req.body.texto,
-                        fecha: Date.now(),
+                        fecha: new Date(),
                         leido: false
                     };
                     gestorBD.insertarMensaje(mensaje, function (result) {
@@ -59,7 +59,7 @@ module.exports = function (app, gestorBD) {
             let criterio = {
                 $or: [
                     {friend1: res.usuario, friend2: req.params.otherUser},
-                    {friend1: req.params.userTo, friend2: res.usuario}
+                    {friend1: req.params.otherUser, friend2: res.usuario}
                 ]
             };
             // Comprobamos que son amigos
@@ -86,7 +86,8 @@ module.exports = function (app, gestorBD) {
                         } else {
                             res.status(200);
                             res.json({
-                                mensajes: chats
+                                mensajes: chats,
+                                usuario: res.usuario
                             });
                             //res.send(JSON.stringify(friends[0].chat));
                         }

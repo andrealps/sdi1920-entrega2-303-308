@@ -13,8 +13,8 @@
                 <div class="nameAndNotification">
                     <!-- Nombre y apellidos -->
                     <a onclick="mostrarChatAmigo(0)" class="infoFriend">
-                        <span class="name" id="name_0">Vincent</span>
-                        <span class="surname" id="surname_0">Porter</span>
+                        <span class="name" id="name_0">Jaime</span>
+                        <span class="surname" id="surname_0">Pérez Álvarez</span>
                     </a>
                     <!-- Si hay mensajes sin leer aparece este div -->
                     <div class="numberNotification">3</div>
@@ -22,7 +22,7 @@
                 <!-- Email -->
                 <div class="status">
                     <i class="fa fa-envelope-square"></i>
-                    <span id="email_0">ejemplo1@gmail.com</span>
+                    <span id="email_0">prueba2@prueba2.com</span>
                 </div>
             </div>
 
@@ -71,10 +71,6 @@
             apellidos: $("#surname_" + index).html(),
             email: $("#email_" + index).html()
         };
-
-        console.log(amigoSeleccionado.nombre);
-        console.log(amigoSeleccionado.apellidos);
-        console.log(amigoSeleccionado.email);
 
         $("#chatFriend").load("widget-chat.html");
     }
