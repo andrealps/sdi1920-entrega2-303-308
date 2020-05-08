@@ -12,7 +12,7 @@
             <div class="about">
                 <div class="nameAndNotification">
                     <!-- Nombre y apellidos -->
-                    <a onclick="mostrarChatAmigo('0')" class="infoFriend">
+                    <a onclick="mostrarChatAmigo(0)" class="infoFriend">
                         <span class="name" id="name_0">Vincent</span>
                         <span class="surname" id="surname_0">Porter</span>
                     </a>
@@ -21,7 +21,8 @@
                 </div>
                 <!-- Email -->
                 <div class="status">
-                    <i class="fa fa-envelope-square" id="email_0"></i> ejemplo1@gmail.com
+                    <i class="fa fa-envelope-square"></i>
+                    <span id="email_0">ejemplo1@gmail.com</span>
                 </div>
             </div>
 
@@ -30,14 +31,15 @@
         <li class="clearfix">
             <div class="about">
                 <div class="nameAndNotification">
-                    <a onclick="mostrarChatAmigo('1')" class="infoFriend">
+                    <a onclick="mostrarChatAmigo(1)" class="infoFriend">
                         <span class="name" id="name_1">Aiden</span>
                         <span class="surname" id="surname_1">Chavez</span>
                     </a>
                     <div class="numberNotification">10</div>
                 </div>
                 <div class="status">
-                    <i class="fa fa-envelope-square" id="email_1"></i> ejemplo2@gmail.com
+                    <i class="fa fa-envelope-square"></i>
+                    <span id="email_1">ejemplo2@gmail.com</span>
                 </div>
             </div>
         </li>
@@ -45,13 +47,14 @@
         <li class="clearfix">
             <div class="about">
                 <div class="nameAndNotification">
-                    <a onclick="mostrarChatAmigo('2')" class="infoFriend">
+                    <a onclick="mostrarChatAmigo(2)" class="infoFriend">
                         <span class="name" id="name_2">Mike</span>
                         <span class="surname" id="surname_2">Thomas</span>
                     </a>
                 </div>
                 <div class="status">
-                    <i class="fa fa-envelope-square"></i> ejemplo3@gmail.com
+                    <i class="fa fa-envelope-square"></i>
+                    <span id="email_2">ejemplo3@gmail.com</span>
                 </div>
             </div>
         </li>
@@ -64,10 +67,14 @@
     // Despliega el chat de ese amigo
     function mostrarChatAmigo(index) {
         amigoSeleccionado = {
-            nombre: $("#name_" + index).val(),
-            apellidos: $("#surname_" + index).val(),
-            email: $("#email_" + index).val()
+            nombre: $("#name_" + index).html(),
+            apellidos: $("#surname_" + index).html(),
+            email: $("#email_" + index).html()
         };
+
+        console.log(amigoSeleccionado.nombre);
+        console.log(amigoSeleccionado.apellidos);
+        console.log(amigoSeleccionado.email);
 
         $("#chatFriend").load("widget-chat.html");
     }
