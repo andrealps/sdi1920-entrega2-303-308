@@ -2,70 +2,13 @@
     <!-- Nombre y apellidos del amigo seleccionado -->
     <div class="chat-header clearfix">
         <div class="chat-about">
-            <div class="chat-with" id="nameSurnameFriendSelected">Vincent Porter</div>
+            <div class="chat-with" id="nameSurnameFriendSelected"></div>
         </div>
     </div>
 
     <!-- Chat -->
     <div class="chat-history">
-        <ul id="messagesList">
-            <!-- Mensaje enviado por nosotros -->
-            <li class="clearfix">
-                <div class="message-data align-right">
-                    <!-- Fecha -->
-                    <span class="message-data-time">10:10 AM, Today</span> &nbsp; &nbsp;
-                    <!-- Leído o enviado -->
-                    <span class="message-data-leido">leído <i class="fa fa-check leido"></i></span>
-                </div>
-                <!-- Texto del mensaje en sí -->
-                <div class="message my-message float-right">
-                    Hola buenasssssssssss :)
-                </div>
-            </li>
-
-            <!-- Mensaje enviado por el amigo -->
-            <li>
-                <div class="message-data">
-                    <span class="message-data-name">Vincent</span>
-                    <span class="message-data-time">10:12 AM, Today</span>
-                    <!-- Aquí no aparece ni leido ni enviado al ser de la otra persona -->
-                </div>
-                <div class="message other-message">
-                    Are we meeting today? Project has been already finished and I have results to show you.
-                </div>
-            </li>
-
-            <li class="clearfix">
-                <div class="message-data align-right">
-                    <span class="message-data-time">10:14 AM, Today</span> &nbsp; &nbsp;
-                    <span class="message-data-leido">leído <i class="fa fa-check leido"></i></span>
-                </div>
-                <div class="message my-message float-right">
-                    Well I am not sure. The rest of the team is not here yet. Maybe in an hour or so? Have you
-                    faced any problems at the last phase of the project?
-                </div>
-            </li>
-
-            <li>
-                <div class="message-data">
-                    <span class="message-data-name">Vincent</span>
-                    <span class="message-data-time">10:20 AM, Today</span>
-                </div>
-                <div class="message other-message">
-                    Actually everything was fine. I'm very excited to show this to our team.
-                </div>
-            </li>
-
-            <li class="clearfix">
-                <div class="message-data align-right">
-                    <span class="message-data-time">10:50 AM, Today</span> &nbsp; &nbsp;
-                    <span class="message-data-leido">enviado <i class="fa fa-check enviado"></i></span>
-                </div>
-                <div class="message my-message float-right">
-                    Prueba de mensaje
-                </div>
-            </li>
-        </ul>
+        <ul id="messagesList"></ul>
     </div> <!-- end chat-history -->
 
     <div class="chat-message clearfix">
@@ -115,6 +58,7 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
+                $("#inputMensaje").empty();
                 //cargarMensajes(amigoSeleccionado);
             },
             error: function (error) {
@@ -145,7 +89,7 @@
     function marcarComoLeidosNuevos(mensajes, usuario) {
         for (let i = 0; i < mensajes.length; i++) {
             // Si emisor = usuario con el que hablamos y el mensaje está como no leído
-            if (mensajes[i].emisor === amigoSeleccionado.email && mensajes[i].receptor === usuario.email
+            if (mensajes[i].emisor === amigoSeleccionado.email && mensajes[i].receptor === usuario
                 && mensajes[i].leido === false) {
                 marcarComoLeido(mensajes[i]._id);
             }
@@ -207,7 +151,9 @@
 
     function formatDate(date) {
         let newDate = new Date(date);
-        return newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + ", a las "
-            + newDate.getHours() + ":" + newDate.getMinutes();
+        var fecha = newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + ", a las "
+            + newDate.getHours() + ":";
+        fecha += newDate.getMinutes() < 10 ? ('0' + newDate.getMinutes()) : newDate.getMinutes();
+        return fecha;
     }
 </script>
