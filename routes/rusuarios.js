@@ -6,8 +6,7 @@ module.exports = function (app, swig, gestorBD) {
         // Búsqueda
         let criterio = {
             $and: [{email: {$ne: req.session.usuario}, rol: {$ne: "admin"}}]
-    };
-
+        };
         if (req.query.busqueda != null) {
             criterio.$and.push({
                 $or: [{"nombre": {$regex: ".*" + req.query.busqueda + ".*"}},
