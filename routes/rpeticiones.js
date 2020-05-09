@@ -12,21 +12,39 @@ module.exports = function (app, swig, gestorBD) {
 
         gestorBD.obtenerPeticiones(criterioPeticiones, function (peticiones) {
             if (peticiones.length == 0) {
-                let friendRequest = {
-                    userFrom: req.session.usuario,
-                    userTo: req.params.email,
-                    accepted: false
-                };
 
-                gestorBD.insertarPeticion(friendRequest, function (idFriendRequest) {
-                    if (idFriendRequest == null) {
-                        res.send(respuesta);
-                    } else {
-                        res.redirect("/listaUsuarios" +
-                            "?mensaje=¡Petición enviada!" +
-                            "&tipoMensaje=alert-success");
+                // No puede enviar petición a un amigo
+                let criterioAmigos = {
+                    $or : [{$and : [{friend1 : req.session.usuario}, {friend2 : req.params.email}]},
+                        {$and : [{friend1 : req.params.email}, {friend2 : req.session.usuario}]}]
+                }
+
+                gestorBD.obtenerAmistades(criterioAmigos, function (amistades) {
+                    console.log(amistades);
+                    if(amistades.length == 0) {
+                        let friendRequest = {
+                            userFrom: req.session.usuario,
+                            userTo: req.params.email,
+                            accepted: false
+                        };
+
+                        gestorBD.insertarPeticion(friendRequest, function (idFriendRequest) {
+                            if (idFriendRequest == null) {
+                                res.send(respuesta);
+                            } else {
+                                res.redirect("/listaUsuarios" +
+                                    "?mensaje=¡Petición enviada!" +
+                                    "&tipoMensaje=alert-success");
+                            }
+                        });
                     }
-                });
+                    else {
+                        res.redirect("/listaUsuarios" +
+                            "?mensaje=¡Ya sois amigos!" +
+                            "&tipoMensaje=alert-danger ");
+                    }
+                })
+
             } else {
                 res.redirect("/listaUsuarios" +
                     "?mensaje=Ya has mandado petición a este usuario" +
