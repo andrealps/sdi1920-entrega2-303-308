@@ -2,8 +2,21 @@
 let express = require('express');
 let app = express();
 
+// Logger para registrar la actividad
+const log4js = require('log4js');
+// configuración del logger
+log4js.configure({
+    appenders: {
+        console: {type: 'console'}
+    },
+    categories: {
+        default: {appenders: ['console'], level: 'trace'}
+    }
+});
+const logger = log4js.getLogger('logger');
+
 // Cabeceras
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
@@ -52,17 +65,20 @@ routerUsuarioToken.use(function (req, res, next) {
         jwt.verify(token, 'secreto', function (err, infoToken) {
             if (err || (Date.now() / 1000 - infoToken.tiempo) > 240) {
                 res.status(403); // Forbidden
+                logger.error("Intento de acceso al servicio web con token inválido o caducado");
                 res.json({acceso: false, error: 'Token invalido o caducado'});
                 return;
             } else {
                 // dejamos correr la petición
                 res.usuario = infoToken.usuario;
+                logger.info(`El usuario ${res.usuario} accedió a ${getUrl(req)}`);
                 next();
             }
         });
     } else {
         res.status(403); // Forbidden
-        res.json({acceso: false, mensaje: 'No hay Token'});
+        logger.error("No hay Token");
+        res.json({acceso: false, mensaje: 'Intento de acceso al servicio web sin Token'});
     }
 });
 
@@ -75,12 +91,14 @@ app.use('/api/chat/leer/:idMensaje', routerUsuarioToken);
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
 routerUsuarioSession.use(function (req, res, next) {
-    console.log("routerUsuarioSession");
+    //console.log("routerUsuarioSession");
     if (req.session.usuario) {
         // dejamos correr la petición
+        logger.info(`El usuario ${req.session.usuario} accedió a ${getUrl(req)}`);
         next();
     } else {
-        console.log("va a : " + req.session.destino);
+        logger.error(`Intento de acceso a ${getUrl(req)} sin autenticación`);
+        logger.warn(`Redirección al formulario de login`);
         res.redirect("/identificarse");
     }
 });
@@ -124,4 +142,8 @@ app.renderView = (view, session, respuesta) => {
     respuesta = respuesta ? respuesta : {};
     respuesta.usuario = session.usuario;
     return swig.renderFile(view, respuesta);
+};
+
+let getUrl = (req) => {
+    return req.protocol + '://' + req.get('host') + req.originalUrl;
 };
