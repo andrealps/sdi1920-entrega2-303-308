@@ -114,13 +114,15 @@ module.exports = function (app, swig, gestorBD) {
             let criterioReverse = {$and: [{userFrom: req.session.usuario}, {userTo: req.params.email}, {accepted: false}]};
 
             gestorBD.obtenerPeticiones(criterioReverse, function (peticiones) {
-                let criterio = {"_id": peticiones[0]._id};
-                let update = {accepted: true};
-                
-                gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
-                    if (requestAccepted == null)
-                        res.send("Error al añadir amigo");
-                })
+                if(peticiones.length != 0) {
+                    let criterio = {"_id": peticiones[0]._id};
+                    let update = {accepted: true};
+
+                    gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
+                        if (requestAccepted == null)
+                            res.send("Error al añadir amigo");
+                    })
+                }
             });
 
             gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
