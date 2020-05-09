@@ -15,13 +15,12 @@ module.exports = function (app, swig, gestorBD) {
 
                 // No puede enviar petición a un amigo
                 let criterioAmigos = {
-                    $or : [{$and : [{friend1 : req.session.usuario}, {friend2 : req.params.email}]},
-                        {$and : [{friend1 : req.params.email}, {friend2 : req.session.usuario}]}]
+                    $or: [{$and: [{friend1: req.session.usuario}, {friend2: req.params.email}]},
+                        {$and: [{friend1: req.params.email}, {friend2: req.session.usuario}]}]
                 }
 
                 gestorBD.obtenerAmistades(criterioAmigos, function (amistades) {
-                    console.log(amistades);
-                    if(amistades.length == 0) {
+                    if (amistades.length == 0) {
                         let friendRequest = {
                             userFrom: req.session.usuario,
                             userTo: req.params.email,
@@ -37,8 +36,7 @@ module.exports = function (app, swig, gestorBD) {
                                     "&tipoMensaje=alert-success");
                             }
                         });
-                    }
-                    else {
+                    } else {
                         res.redirect("/listaUsuarios" +
                             "?mensaje=¡Ya sois amigos!" +
                             "&tipoMensaje=alert-danger ");
@@ -122,51 +120,41 @@ module.exports = function (app, swig, gestorBD) {
     app.get("/friendRequest/accept/:email", function (req, res) {
 
         // Busco la peticion para marcarla a aceptada
-        let criterio = {$and: [{userFrom: req.params.email}, {userTo: req.session.usuario}, {accepted: false}]};
+        // Hay que hacerlo a la inversa también si se da el caso de peticiones mutuas
+        let criterio = {
+            $or: [{$and: [{userFrom: req.params.email}, {userTo: req.session.usuario}, {accepted: false}]},
+                {$and: [{userFrom: req.session.usuario}, {userTo: req.params.email}, {accepted: false}]}]
+        };
+        let update = {accepted: true};
 
         gestorBD.obtenerPeticiones(criterio, function (peticiones) {
-            let criterio = {"_id": peticiones[0]._id};
-            let update = {accepted: true};
+            console.log(peticiones);
+            for (i = 0; i < peticiones.length; i++) {
+                let criterio = {"_id": peticiones[i]._id};
 
-            // Hay que hacerlo a la inversa también si se da el caso de peticiones mutuas
-            let criterioReverse = {$and: [{userFrom: req.session.usuario}, {userTo: req.params.email}, {accepted: false}]};
+                gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
+                    if (requestAccepted == null)
+                        res.send("Error al aceptar la petición");
 
-            gestorBD.obtenerPeticiones(criterioReverse, function (peticiones) {
-                if(peticiones.length != 0) {
-                    let criterio = {"_id": peticiones[0]._id};
-                    let update = {accepted: true};
-
-                    gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
-                        if (requestAccepted == null)
-                            res.send("Error al añadir amigo");
-                    })
-                }
-            });
-
-            gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
-                if (requestAccepted == null)
+                })
+            }
+            // Se crea la amistad
+            let friendship = {
+                friend1: req.params.email,
+                friend2: req.session.usuario
+            };
+            gestorBD.insertarAmistad(friendship, function (friends) {
+                if (!friends) {
                     res.send("Error al añadir amigo");
-                else {
-                    // Se crea la amistad
-                    let friendship = {
-                        friend1: req.params.email,
-                        friend2: req.session.usuario
-                    };
-                    gestorBD.insertarAmistad(friendship, function (friends) {
-                        if (!friends) {
-                            res.send("There was an error adding");
-                        } else {
-                            res.redirect("/listFriendRequests" +
-                                "?mensaje=¡Tienes un nuevo amigo!" +
-                                "&tipoMensaje=alert-success ");
-                        }
-                    })
+                } else {
+                    res.redirect("/listFriendRequests" +
+                        "?mensaje=¡Tienes un nuevo amigo!" +
+                        "&tipoMensaje=alert-success ");
                 }
-
             })
-        })
+        });
+    })
 
-    });
 
     /**
      * Ver mis amigos
@@ -234,4 +222,5 @@ module.exports = function (app, swig, gestorBD) {
             }
         })
     });
-};
+}
+;
