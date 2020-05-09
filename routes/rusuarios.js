@@ -40,6 +40,7 @@ module.exports = function (app, swig, gestorBD) {
                 let criterio = {
                     email: req.session.usuario,
                 };
+
                 gestorBD.obtenerUsuarios(criterio, function (usuario) {
                     if (usuario == null) {
                         res.send("Error al obtener la lista de usuarios");

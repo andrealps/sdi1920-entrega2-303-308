@@ -24,6 +24,7 @@ module.exports = function (app, swig, gestorBD) {
      * Lista las peticiones de amistad del usuario en sesion
      */
     app.get("/listFriendRequests", function (req, res) {
+
         let criterio = {$and: [{userTo: req.session.usuario}, {accepted: false}]};
 
         gestorBD.obtenerPeticiones(criterio, function (peticiones) {
@@ -130,12 +131,38 @@ module.exports = function (app, swig, gestorBD) {
                 }
 
                 let criterio = {"email": {$in: friends}};
-                gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-                    let respuesta = swig.renderFile('views/blistaAmigos.html', {
-                        usuarios: usuarios
-                    });
-                    res.send(respuesta);
-                })
+
+                let pg = parseInt(req.query.pg); // Es String !!!
+                if (req.query.pg == null) { // Puede no venir el param
+                    pg = 1;
+                }
+
+                // Obtenemos los usuarios de la BD
+                gestorBD.obtenerUsuariosPg(criterio, pg, function (usuarios, total) {
+                    if (usuarios == null) {
+                        res.send("Error al listar ");
+                    } else {
+                        // Sacar usuarios por página
+                        let ultimaPg = total / 5;
+                        if (total % 5 > 0) { // Sobran decimales
+                            ultimaPg = ultimaPg + 1;
+                        }
+                        let paginas = []; // paginas mostrar
+                        for (let i = pg - 2; i <= pg + 2; i++) {
+                            if (i > 0 && i <= ultimaPg) {
+                                paginas.push(i);
+                            }
+                        }
+
+                        let respuesta = swig.renderFile('views/blistaAmigos.html', {
+                            usuarios: usuarios,
+                            paginas: paginas,
+                            actual: pg
+                        });
+                        res.send(respuesta);
+
+                    }
+                });
             }
         })
     });
