@@ -77,8 +77,8 @@ routerUsuarioToken.use(function (req, res, next) {
         });
     } else {
         res.status(403); // Forbidden
-        logger.error("No hay Token");
-        res.json({acceso: false, mensaje: 'Intento de acceso al servicio web sin Token'});
+        logger.error("Intento de acceso al servicio web sin Token");
+        res.json({acceso: false, mensaje: 'No hay Token'});
     }
 });
 
