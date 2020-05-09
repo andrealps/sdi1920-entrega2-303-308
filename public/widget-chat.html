@@ -1,67 +1,159 @@
 <div class="chat">
+    <!-- Nombre y apellidos del amigo seleccionado -->
     <div class="chat-header clearfix">
         <div class="chat-about">
-            <div class="chat-with">Vincent Porter</div>
+            <div class="chat-with" id="nameSurnameFriendSelected"></div>
         </div>
-    </div> <!-- end chat-header -->
+    </div>
 
+    <!-- Chat -->
     <div class="chat-history">
-        <ul>
-            <li class="clearfix">
-                <div class="message-data align-right">
-                    <span class="message-data-time">10:10 AM, Today</span> &nbsp; &nbsp;
-
-                </div>
-                <div class="message other-message float-right">
-                    Hi Vincent, how are you? How is the project coming along?
-                </div>
-            </li>
-
-            <li>
-                <div class="message-data">
-                    <span class="message-data-name">Vincent</span>
-                    <span class="message-data-time">10:12 AM, Today</span>
-                </div>
-                <div class="message my-message">
-                    Are we meeting today? Project has been already finished and I have results to show you.
-                </div>
-            </li>
-
-            <li class="clearfix">
-                <div class="message-data align-right">
-                    <span class="message-data-time">10:14 AM, Today</span> &nbsp; &nbsp;
-                    <span class="message-data-name">Olia</span>
-
-                </div>
-                <div class="message other-message float-right">
-                    Well I am not sure. The rest of the team is not here yet. Maybe in an hour or so? Have you
-                    faced any problems at the last phase of the project?
-                </div>
-            </li>
-
-            <li>
-                <div class="message-data">
-                    <span class="message-data-name">Vincent</span>
-                    <span class="message-data-time">10:20 AM, Today</span>
-                </div>
-                <div class="message my-message">
-                    Actually everything was fine. I'm very excited to show this to our team.
-                </div>
-            </li>
-
-            <li>
-                <div class="message-data">
-                    <span class="message-data-name">Vincent</span>
-                    <span class="message-data-time">10:31 AM, Today</span>
-                </div>
-            </li>
-        </ul>
+        <ul id="messagesList"></ul>
     </div> <!-- end chat-history -->
 
     <div class="chat-message clearfix">
-        <textarea name="message-to-send" id="message-to-send" placeholder="Type your message" rows="1"></textarea>
-        <button id="sendMessage">Send</button>
+        <!-- Textarea con el mensaje a enviar -->
+        <textarea name="message-to-send" id="inputMensaje" placeholder="Escribe un mensaje" rows="1"></textarea>
+        <!-- Botón para enviar el mensaje -->
+        <button id="sendMessage" onclick="crearMensaje()">Send</button>
 
     </div> <!-- end chat-message -->
 
 </div> <!-- end chat -->
+
+<script>
+    var mensajes;
+
+    // Busca los mensajes en la BD y los actualiza
+    function cargarMensajes() {
+        $.ajax({
+            url: URLbase + "/chat/" + amigoSeleccionado.email,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                mensajes = respuesta.mensajes;
+                $("#nameSurnameFriendSelected").text(amigoSeleccionado.nombre + " " + amigoSeleccionado.apellidos);
+                marcarComoLeidosNuevos(mensajes, respuesta.usuario);
+                actualizarMensajes(mensajes, respuesta.usuario);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+    // Añade un mensaje a la BD
+    function crearMensaje() {
+        // Comprobamos que no se intente mandar un mensaje vacío
+        //if ($("#message-to-send").val() !== null && $("#message-to-send").val().length !== 0) {
+        $.ajax({
+            url: URLbase + "/mensaje",
+            type: "POST",
+            data: {
+                userTo: amigoSeleccionado.email,
+                texto: $("#inputMensaje").val()
+            },
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                $("#inputMensaje").empty();
+                //cargarMensajes(amigoSeleccionado);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+        //}
+    }
+
+    // Marca un mensaje como leído
+    function marcarComoLeido(id) {
+        $.ajax({
+            url: URLbase + "/chat/leer/" + id,
+            type: "PUT",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                //cargarMensajes(amigoSeleccionado);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+    // Comprueba si tenemos mensajes recibidos sin leer para marcarlos como leídos
+    function marcarComoLeidosNuevos(mensajes, usuario) {
+        for (let i = 0; i < mensajes.length; i++) {
+            // Si emisor = usuario con el que hablamos y el mensaje está como no leído
+            if (mensajes[i].emisor === amigoSeleccionado.email && mensajes[i].receptor === usuario
+                && mensajes[i].leido === false) {
+                marcarComoLeido(mensajes[i]._id);
+            }
+        }
+    }
+
+    // Actualiza los mensajes
+    function actualizarMensajes(mensajes, usuario) {
+        // Vaciamos la lista de mensajes
+        $("#messagesList").empty();
+
+        for (i = 0; i < mensajes.length; i++) {
+            var chat = "";
+
+            // Nuestro mensaje
+            if (usuario === mensajes[i].emisor) {
+                chat += "<li class=\"clearfix\">";
+                chat += "<div class=\"message-data align-right\">";
+            }
+            // El del otro usuario
+            else {
+                chat += "<li>";
+                chat += "<div class=\"message-data\">";
+                chat += "<span class=\"message-data-name\">" + amigoSeleccionado.nombre + "</span>";
+            }
+
+            // Fecha y hora
+            chat += "<span class=\"message-data-time\">" + formatDate(mensajes[i].fecha) + "</span> &nbsp; &nbsp;";
+
+            // Leído o enviado solo si el usuario es el emisor
+            if (usuario === mensajes[i].emisor) {
+                mensajes[i].leido === true ?
+                    chat += "<span class=\"message-data-leido\">leído <i class=\"fa fa-check leido\"></i></span>"
+                    : chat += "<span class=\"message-data-leido\">enviado <i class=\"fa fa-check enviado\"></i></span>";
+            }
+            chat += "</div>";
+
+            // Texto del mensaje en sí
+            if (usuario === mensajes[i].emisor) {
+                chat += "<div class=\"message my-message float-right\">" + mensajes[i].texto + "</div>";
+            }
+            // El del otro usuario
+            else {
+                chat += "<div class=\"message other-message\">" + mensajes[i].texto + "</div>";
+            }
+
+            chat += "</li>";
+
+            $("#messagesList").append(
+                chat
+            );
+        }
+    }
+
+    // Cada segundo se actualizan los mensajes
+    setInterval(function () {
+        cargarMensajes(amigoSeleccionado);
+    }, 1000);
+
+    function formatDate(date) {
+        let newDate = new Date(date);
+        var fecha = newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + ", a las "
+            + newDate.getHours() + ":";
+        fecha += newDate.getMinutes() < 10 ? ('0' + newDate.getMinutes()) : newDate.getMinutes();
+        return fecha;
+    }
+</script>

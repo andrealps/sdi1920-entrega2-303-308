@@ -24,8 +24,9 @@ module.exports = function (app, swig, gestorBD) {
                 res.send("Error al listar ");
             } else {
                 // Sacar usuarios por página
-                let ultimaPg = total / 5;
-                if (total % 5 > 0) { // Sobran decimales
+                // Nos restamos a nosotros mismos y al administrador
+                let ultimaPg = (total - 2) / 5;
+                if ((total - 2) % 5 > 0) { // Sobran decimales
                     ultimaPg = ultimaPg + 1;
                 }
                 let paginas = []; // paginas mostrar
@@ -47,7 +48,8 @@ module.exports = function (app, swig, gestorBD) {
                             usuarios: usuarios,
                             paginas: paginas,
                             actual: pg,
-                            rol: usuario[0].rol
+                            rol: usuario[0].rol,
+                            busqueda: req.query.busqueda
                         }));
                     }
                 });

@@ -1,99 +1,77 @@
 <div class="people-list" id="people-list">
+    <!-- Búsqueda por nombre -->
     <div class="search">
         <label>
-            <input type="text" placeholder="Buscar a un amigo"/>
+            <input type="text" placeholder="Buscar por nombre"/>
         </label>
         <button id="searchButton"><i class="fa fa-search"></i></button>
     </div>
     <ul class="list">
+        <!-- Un amigo -->
         <li class="clearfix">
             <div class="about">
-                <div class="name">Vincent Porter</div>
+                <div class="nameAndNotification">
+                    <!-- Nombre y apellidos -->
+                    <a onclick="mostrarChatAmigo(0)" class="infoFriend">
+                        <span class="name" id="name_0">Jaime</span>
+                        <span class="surname" id="surname_0">Pérez Álvarez</span>
+                    </a>
+                    <!-- Si hay mensajes sin leer aparece este div -->
+                    <div class="numberNotification">3</div>
+                </div>
+                <!-- Email -->
                 <div class="status">
-                    <i class="fa fa-envelope-square"></i> ejemplo1@gmail.com
+                    <i class="fa fa-envelope-square"></i>
+                    <span id="email_0">prueba2@prueba2.com</span>
+                </div>
+            </div>
+
+        </li>
+
+        <li class="clearfix">
+            <div class="about">
+                <div class="nameAndNotification">
+                    <a onclick="mostrarChatAmigo(1)" class="infoFriend">
+                        <span class="name" id="name_1">Aiden</span>
+                        <span class="surname" id="surname_1">Chavez</span>
+                    </a>
+                    <div class="numberNotification">10</div>
+                </div>
+                <div class="status">
+                    <i class="fa fa-envelope-square"></i>
+                    <span id="email_1">ejemplo2@gmail.com</span>
                 </div>
             </div>
         </li>
 
         <li class="clearfix">
             <div class="about">
-                <div class="name">Aiden Chavez</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> ejemplo2@gmail.com
+                <div class="nameAndNotification">
+                    <a onclick="mostrarChatAmigo(2)" class="infoFriend">
+                        <span class="name" id="name_2">Mike</span>
+                        <span class="surname" id="surname_2">Thomas</span>
+                    </a>
                 </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Mike Thomas</div>
                 <div class="status">
-                    <i class="fa fa-envelope-square"></i> ejemplo3@gmail.com
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Erica Hughes</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> ejemplo4@gmail.com
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Ginger Johnston</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> online
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Tracy Carpenter</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> left 30 mins ago
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Christian Kelly</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> left 10 hours ago
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Monica Ward</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> online
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Dean Henry</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> offline since Oct 28
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="name">Peyton Mckinney</div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i> online
+                    <i class="fa fa-envelope-square"></i>
+                    <span id="email_2">ejemplo3@gmail.com</span>
                 </div>
             </div>
         </li>
     </ul>
 </div>
+
+<script>
+    window.history.pushState("", "", "/cliente.html?w=friends");
+
+    // Despliega el chat de ese amigo
+    function mostrarChatAmigo(index) {
+        amigoSeleccionado = {
+            nombre: $("#name_" + index).html(),
+            apellidos: $("#surname_" + index).html(),
+            email: $("#email_" + index).html()
+        };
+
+        $("#chatFriend").load("widget-chat.html");
+    }
+</script>
