@@ -174,8 +174,6 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 let collection = db.collection('friendRequests');
-                console.log(criterio);
-                console.log(update);
                 collection.update(criterio, {$set: update}, function(err, result) {
                     if (err) {
                         funcionCallback(null);
@@ -254,6 +252,46 @@ module.exports = {
             } else {
                 let collection = db.collection(nombreColeccion);
                 collection.update(criterio, {$set: elemento}, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
+    // ELIMINAR PETICIONES
+
+    eliminarPeticiones: function (funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('friendRequests');
+                collection.remove({}, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
+    // ELIMINAR AMISTADES
+
+    eliminarAmistades: function (funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('friends');
+                collection.remove({}, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {

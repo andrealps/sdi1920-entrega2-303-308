@@ -128,7 +128,6 @@ module.exports = function (app, swig, gestorBD) {
         let update = {accepted: true};
 
         gestorBD.obtenerPeticiones(criterio, function (peticiones) {
-            console.log(peticiones);
             for (i = 0; i < peticiones.length; i++) {
                 let criterio = {"_id": peticiones[i]._id};
 

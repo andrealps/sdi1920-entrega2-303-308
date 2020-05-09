@@ -23,10 +23,9 @@ public class Tests {
 	// En Windows (Debe ser la versión 65.0.1 y desactivar las actualizaciones
 	// automáticas)):
 	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-	// static String Geckdriver024 = "C:\\Users\\SARA\\Documents\\Universidad\\3º
-	// Curso\\SDI\\Práctica\\Sesión5-Web testing con
-	// Selenium\\PL-SDI-Sesión5-material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
-	static String Geckdriver024 = "D:\\UNIVERSIDAD\\Tercer curso\\SDI\\material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
+	static String Geckdriver024 = "C:\\Users\\SARA\\Desktop\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
+	// static String Geckdriver024 = "D:\\UNIVERSIDAD\\Tercer
+	// curso\\SDI\\material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
 	static String URL = "https://localhost:8081";
@@ -53,14 +52,14 @@ public class Tests {
 	static public void begin() {
 		// Configuramos las pruebas.
 		// Fijamos el timeout en cada opción de carga de una vista. 2 segundos.
-		PO_View.setTimeout(3);
+		PO_View.setTimeout(2);
 		driver.navigate().to(URLreiniciarBD);
 	}
 
 	@AfterClass
 	static public void end() {
 		// Cerramos el navegador al finalizar las pruebas
-		driver.quit();
+		// driver.quit();
 	}
 
 	/**
@@ -214,7 +213,8 @@ public class Tests {
 		// Nos logueamos
 		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
 		// Nos redirige a la lista de usuarios. Se cargan todos los usuarios
-		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr",
+				PO_View.getTimeout());
 		assertTrue(elementos.size() == 5);
 		// Nos vamos a la siguiente página
 		elementos = PO_View.checkElement(driver, "free", "//a[contains(@class, 'page-link')]");
@@ -236,7 +236,8 @@ public class Tests {
 		// Nos redirige a la lista de usuarios. Hacemos una búsqueda con campo vacío
 		PO_PrivateView.search(driver, "");
 		// Se cargan todos los usuarios
-		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr",
+				PO_View.getTimeout());
 		assertTrue(elementos.size() == 5);
 		// Nos vamos a la siguiente página
 		elementos = PO_View.checkElement(driver, "free", "//a[contains(@class, 'page-link')]");
@@ -275,36 +276,79 @@ public class Tests {
 		// Nos logueamos
 		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
 		// Nos redirige a la lista de usuarios
-		
+
 		// BUSQUEDA POR NOMBRE
 		PO_PrivateView.search(driver, "Sam");
 		// Comprobamos que aparece el usuario que corresponde
 		PO_View.checkElement(driver, "text", "ejemplo2@gmail.com");
-		
+
 		// BUSQUEDA POR APELLIDOS
 		PO_PrivateView.search(driver, "Shan");
 		// Comprobamos que aparece el usuario que corresponde
 		PO_View.checkElement(driver, "text", "ejemplo4@gmail.com");
-		
+
 		// BUSQUEDA POR EMAIL
 		PO_PrivateView.search(driver, "ejemplo4");
 		// Comprobamos que aparece el usuario que corresponde
 		PO_View.checkElement(driver, "text", "Nadia");
-		
+
 		// Nos desconectamos
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// PR15. Sin hacer /
+	/*
+	 * [Prueba15] Desde el listado de usuarios de la aplicación, enviar una
+	 * invitación de amistad a un usuario. Comprobar que la solicitud de amistad
+	 * aparece en el listado de invitaciones
+	 */
 	@Test
 	public void PR15() {
-		assertTrue("PR15 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
+		// Vamos a lista de usuarios
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr",
+				PO_View.getTimeout());
+		// Enviamos peticion
+		elementos = PO_View.checkElement(driver, "free",
+				"//td[contains(text(), 'Samuel')]/following-sibling::*/a[contains(@href, '/friendRequest/send/ejemplo2@gmail.com')]");
+		elementos.get(0).click();
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
+		// Nos logueamos con el ususario al que le enviamos la peticion
+		PO_PrivateView.login(driver, "ejemplo2@gmail.com", "1234");
+		// Vamos a la pestaña amigos
+		elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'mFriends')]/a");
+		elementos.get(0).click();
+		// Esperamos a que aparezca la pestaña de solicitud de amistad
+		elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'friendRequests')]");
+		elementos.get(0).click();
+		// Comprobamos que hay una solicitud de el usuario ejemplo1: Marina
+		SeleniumUtils.textoPresentePagina(driver, "Marina");
+		// Nos deconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
+
 	}
 
-	// PR16. Sin hacer /
+	/*
+	 * [Prueba16] Desde el listado de usuarios de la aplicación, enviar una
+	 * invitación de amistad a un usuario al que ya le habíamos enviado la
+	 * invitación previamente. No debería dejarnos enviar la invitación
+	 */
 	@Test
 	public void PR16() {
-		assertTrue("PR16 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo1@gmail.com", "1234");
+		// Vamos a lista de usuarios
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr",
+				PO_View.getTimeout());
+		// Enviamos peticion
+		elementos = PO_View.checkElement(driver, "free",
+				"//td[contains(text(), 'Samuel')]/following-sibling::*/a[contains(@href, '/friendRequest/send/ejemplo2@gmail.com')]");
+		elementos.get(0).click();
+		// Nos deberia aparecer un mensaje de que ya le ha enviado una peticiñon
+		SeleniumUtils.textoPresentePagina(driver, "Ya has mandado petición a este usuario");
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
 	// PR017. Sin hacer /
