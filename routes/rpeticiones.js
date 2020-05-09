@@ -60,13 +60,23 @@ module.exports = function (app, swig, gestorBD) {
                             }
                         }
 
-                        let respuesta = swig.renderFile('views/blistaPeticiones.html', {
-                            usuarios: usuarios,
-                            paginas: paginas,
-                            actual: pg
-                        });
-                        res.send(respuesta);
+                        // Sacamos el rol del usuario
+                        let criterio = {
+                            email: req.session.usuario,
+                        };
 
+                        gestorBD.obtenerUsuarios(criterio, function (usuario) {
+                            if (usuario == null) {
+                                res.send("Error al obtener la lista de usuarios");
+                            } else {
+                                res.send(app.renderView("views/blistaPeticiones.html", req.session, {
+                                    usuarios: usuarios,
+                                    paginas: paginas,
+                                    actual: pg,
+                                    rol: usuario[0].rol
+                                }));
+                            }
+                        });
                     }
                 });
             }
@@ -154,13 +164,23 @@ module.exports = function (app, swig, gestorBD) {
                             }
                         }
 
-                        let respuesta = swig.renderFile('views/blistaAmigos.html', {
-                            usuarios: usuarios,
-                            paginas: paginas,
-                            actual: pg
-                        });
-                        res.send(respuesta);
+                        // Sacamos el rol del usuario
+                        let criterio = {
+                            email: req.session.usuario,
+                        };
 
+                        gestorBD.obtenerUsuarios(criterio, function (usuario) {
+                            if (usuario == null) {
+                                res.send("Error al obtener la lista de amigos");
+                            } else {
+                                res.send(app.renderView("views/blistaAmigos.html", req.session, {
+                                    usuarios: usuarios,
+                                    paginas: paginas,
+                                    actual: pg,
+                                    rol: usuario[0].rol
+                                }));
+                            }
+                        });
                     }
                 });
             }
