@@ -1,5 +1,46 @@
 module.exports = function (app, gestorBD) {
     /**
+     * S2 - Lista de amigos
+     */
+    app.get("/api/friends", function (req, res) {
+        var criterio = {
+            $and: [{$or: [{friend1: res.usuario}, {friend2: res.usuario}]}]
+        };
+        gestorBD.obtenerAmistades(criterio, function (amistades) {
+            if (amistades == null) {
+                res.status(500);
+                res.json({
+                    error: "Se ha producido un error"
+                })
+            } else {
+                var amigos = [];
+                for (i = 0; i < amistades.length; i++) {
+                    if (amistades[i].friend1 == res.usuario)
+                        amigos.push(amistades[i].friend2);
+                    else
+                        amigos.push(amistades[i].friend1);
+                }
+
+                var criterio2 = {email: {$in: amigos}};
+                gestorBD.obtenerUsuarios(criterio2, function (usuarios) {
+                    if (usuarios == null) {
+                        res.status(500);
+                        res.json({
+                            error: "Se ha producido un error"
+                        })
+                    } else {
+                        res.status(200);
+                        res.json({
+                            friends: usuarios,
+                            usuario: res.usuario
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    /**
      * S3 - Usuario identificado: Crear un mensaje
      */
     app.post("/api/mensaje", function (req, res) {
@@ -89,7 +130,6 @@ module.exports = function (app, gestorBD) {
                                 mensajes: chats,
                                 usuario: res.usuario
                             });
-                            //res.send(JSON.stringify(friends[0].chat));
                         }
                     });
                 }

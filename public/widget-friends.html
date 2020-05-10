@@ -27,8 +27,8 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                friends = respuesta;
-                actualizarLista(friends);
+                friends = respuesta.friends;
+                actualizarLista(friends, respuesta.usuario);
             },
             error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");
@@ -38,20 +38,26 @@
 
     function actualizarLista(amigosMostrar) {
         $("#myFriends").empty(); // Vaciar la tabla
-        for (i = 0; i < amigosMostrar.length; i++) {
-            $("#myFriends").append(
-                "<li class='clearfix'>" +
+        for (let i = 0; i < amigosMostrar.length; i++) {
+            var lista = "";
+            lista += "<li class='clearfix'>" +
                 "<div class='about'>" +
                 `<div class='nameAndNotification' id='dataFriend_${i}'>` +
                 "<a onclick=mostrarChatAmigo(" + i + ") class='infoFriend'>" +
                 "<span class='name' id='name_" + i + "'>" + amigosMostrar[i].nombre + " </span>" +
                 "<span class='surname' id='surname_" + i + "'>" + amigosMostrar[i].apellidos + "</span>" +
-                "</a>" +
-                "</div>" +
+                "</a>";
+
+            lista += actualizarNotificacion(amigosMostrar[i], i);
+
+            lista += "</div>" +
                 "<div class='status'>" +
                 "<i class='fa fa-envelope-square'></i>" +
                 "<span id='email_" + i + "'>" + amigosMostrar[i].email + "</span>" +
-                "</div></div></li>"
+                "</div></div></li>";
+
+            $("#myFriends").append(
+                lista
             );
         }
     }
@@ -91,19 +97,23 @@
      **/
 
     // Actualiza las notificaciones de los mensajes sin leer en cada amigo
-    function actualizarNotificaciones(friends) {
-        for (let i = 0; i < friends.length; i++) {
-            cargaMensajes(friends[i].email, function (respuesta) {
-                let numSinLeer = numeroMensajesSinLeer(respuesta.mensajes, respuesta.usuario);
-                // Crea una notificación si es necesaria para el amigo
-                if (numSinLeer > 0) crearGloboNotificacion(i, numSinLeer);
-            });
-        }
+    function actualizarNotificacion(friend, i) {
+        let notificacion = "";
+        console.log(friend.email);
+        cargaMensajes(friend.email, function (respuesta) {
+            let numSinLeer = numeroMensajesSinLeer(respuesta.mensajes, respuesta.usuario);
+            console.log(numSinLeer);
+            // Crea una notificación si es necesaria para el amigo
+            if (numSinLeer > 0)
+                notificacion = crearGloboNotificacion(i, numSinLeer);
+        });
+        console.log(notificacion);
+        return notificacion;
     }
 
     // Devuelve el número de mensajes sin leer
     function numeroMensajesSinLeer(mensajes, usuario) {
-        return mensajes.filter(m => m.receptor === usuario).length;
+        return mensajes.filter(m => m.receptor === usuario && m.leido === false).length;
     }
 
     // Añade el globo de notificación al lado del amigo si tiene alguna notificación
@@ -112,4 +122,10 @@
             `<div class="numberNotification">${numSinLeer}</div>`
         );
     }
+
+    // Cada segundo se actualizan los amigod
+    setInterval(function () {
+        cargarAmigos();
+    }, 1000);
+
 </script>
