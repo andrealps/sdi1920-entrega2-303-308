@@ -43,12 +43,16 @@
                 "<li class='clearfix'>" +
                 "<div class='about'>" +
                 "<div class='nameAndNotification'>" +
-                "<a onclick=mostrarChatAmigo('" + i + "')class='infoFriend'>" +
-                "<span class='name' id='name'>" + amigosMostrar[i].nombre + "</span>" +
-                "<span class='surname' id='surname'> " + amigosMostrar[i].apellidos + "</span></a></div>" +
+                "<a onclick=mostrarChatAmigo(" + i + ") class='infoFriend'>" +
+                "<span class='name' id='name_" + i + "'>" + amigosMostrar[i].nombre + " </span>" +
+                "<span class='surname' id='surname_" + i + "'>" + amigosMostrar[i].apellidos + "</span>" +
+                "</a>" +
+                "<div class='numberNotification'></div>" +
+                "</div>" +
                 "<div class='status'>" +
                 "<i class='fa fa-envelope-square'></i>" +
-                "<span id='email'> " + amigosMostrar[i].email + "</span></div></div></li>"
+                "<span id='email_" + i + "'>" + amigosMostrar[i].email + "</span>" +
+                "</div></div></li>"
             );
         }
     }
