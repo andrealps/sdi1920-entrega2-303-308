@@ -470,16 +470,6 @@ public class Tests {
 		PO_View.checkElement(driver, "id", "loginUsuarios");
 	}
 
-	/*
-	 * [Prueba22] Intentar acceder estando autenticado como usuario standard a la
-	 * lista de amigos de otro usuario. Se deberá mostrar un mensaje de acción
-	 * indebida.
-	 */
-	@Test
-	public void PR22() {
-		assertTrue("PR22 sin hacer", false);
-	}
-
 	// PR23. Sin hacer /
 	@Test
 	public void PR23() {

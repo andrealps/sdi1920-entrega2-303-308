@@ -45,20 +45,11 @@
 </div>
 
 <script>
+
     var token;
     var URLbase = "https://localhost:8081/api";
 
-    var amigoSeleccionado;
-
-    function widgetChat() {
-        $("#friendsList").load("widget-friends.html");
-        $("#chatFriend").load("widget-chat.html");
-    }
-
-    // De momento comentado hasta que se haga
-    //$("#contenedor-principal").load("widget-login.html");
-    $("#friendsList").load("widget-friends.html");
-    //$("#chatFriend").load("widget-chat.html");
+    $("#contenedor-principal").load("widget-login.html");
 
     if (Cookies.get('token') != null) {
         token = Cookies.get('token');
@@ -72,6 +63,18 @@
             //$("#chatFriend").load("widget-chat.html");
         }
     }
+
+    var amigoSeleccionado;
+
+    function widgetChat() {
+        $("#friendsList").load("widget-friends.html");
+        $("#chatFriend").load("widget-chat.html");
+    }
+
+    //$("#friendsList").load("widget-friends.html");
+    //$("#chatFriend").load("widget-chat.html");
+
+
 </script>
 
 </body>
