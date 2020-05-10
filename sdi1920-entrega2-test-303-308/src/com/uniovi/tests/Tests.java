@@ -351,22 +351,98 @@ public class Tests {
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// PR017. Sin hacer /
+	/*
+	 * [Prueba17] Mostrar el listado de invitaciones de amistad recibidas. Comprobar
+	 * con un listado que contenga varias invitaciones recibidas.
+	 */
 	@Test
 	public void PR17() {
-		assertTrue("PR17 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo3@gmail.com", "1234");
+		// Vamos a lista de usuarios
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr",
+				PO_View.getTimeout());
+		// Enviamos peticion
+		elementos = PO_View.checkElement(driver, "free",
+				"//td[contains(text(), 'Samuel')]/following-sibling::*/a[contains(@href, '/friendRequest/send/ejemplo2@gmail.com')]");
+		elementos.get(0).click();
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
+
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo4@gmail.com", "1234");
+		// Vamos a lista de usuarios
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		// Enviamos peticion
+		elementos = PO_View.checkElement(driver, "free",
+				"//td[contains(text(), 'Samuel')]/following-sibling::*/a[contains(@href, '/friendRequest/send/ejemplo2@gmail.com')]");
+		elementos.get(0).click();
+		// Nos desconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
+
+		// Nos logueamos con el ususario al que le enviamos la peticion
+		PO_PrivateView.login(driver, "ejemplo2@gmail.com", "1234");
+		// Vamos a la pestaña amigos
+		elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'mFriends')]/a");
+		elementos.get(0).click();
+		// Esperamos a que aparezca la pestaña de solicitud de amistad
+		elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'friendRequests')]");
+		elementos.get(0).click();
+		// Comprobamos que hay 3 solicitudes de amistad
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		assertTrue(elementos.size() == 3);
+		// Nos deconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// PR18. Sin hacer /
+	/*
+	 * [Prueba18] Sobre el listado de invitaciones recibidas. Hacer click en el
+	 * botón/enlace de una de ellas y comprobar que dicha solicitud desaparece del
+	 * listado de invitaciones.
+	 */
 	@Test
 	public void PR18() {
-		assertTrue("PR18 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo2@gmail.com", "1234");
+		// Vamos a la pestaña amigos
+		List<WebElement> elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'mFriends')]/a");
+		elementos.get(0).click();
+		// Esperamos a que aparezca la pestaña de solicitud de amistad
+		elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'friendRequests')]");
+		elementos.get(0).click();
+		// Se cargan todos los usuarios
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		// Aceptamos la petición de Nadia
+		elementos = PO_View.checkElement(driver, "free",
+				"//td[contains(text(), 'Nadia')]/following-sibling::*/a[contains(@href, '/friendRequest/accept/ejemplo4@gmail.com')]");
+		elementos.get(0).click();
+		// Comprobamos que desparece
+		SeleniumUtils.EsperaCargaPaginaNoTexto(driver, "Nadia", PO_View.getTimeout());
+		// Nos deconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// PR19. Sin hacer /
+	/*
+	 * [Prueba19] Mostrar el listado de amigos de un usuario. Comprobar que el
+	 * listado contiene los amigos que deben ser.
+	 */
 	@Test
 	public void PR19() {
-		assertTrue("PR19 sin hacer", false);
+		// Nos logueamos
+		PO_PrivateView.login(driver, "ejemplo2@gmail.com", "1234");
+		// Vamos a la pestaña amigos
+		List<WebElement> elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'mFriends')]/a");
+		elementos.get(0).click();
+		// Esperamos a que aparezca la pestaña de amigos
+		elementos = PO_View.checkElement(driver, "free", "//li[contains(@id, 'myFriends')]");
+		elementos.get(0).click();
+		// Se cargan todos los usuarios
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
+		// Comprobamos que solo tiene a Nadia como amiga
+		SeleniumUtils.textoPresentePagina(driver, "Nadia");
+		assertTrue(elementos.size() == 1);
+		// Nos deconectamos
+		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
 	// P20. Sin hacer /
