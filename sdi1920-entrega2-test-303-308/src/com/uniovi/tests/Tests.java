@@ -445,19 +445,36 @@ public class Tests {
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	// P20. Sin hacer /
+	/*
+	 * [Prueba20] Intentar acceder sin estar autenticado a la opción de listado de
+	 * usuarios. Se deberá volver al formulario de login.
+	 */
 	@Test
 	public void PR20() {
-		assertTrue("PR20 sin hacer", false);
+		// Intentamos acceder al listado de usuarios
+		driver.navigate().to("https://localhost:8081/listaUsuarios");
+		// Comprobamos que nos redirige a la página de inicio de sesión
+		PO_View.checkElement(driver, "id", "loginUsuarios");
 	}
 
-	// PR21. Sin hacer /
+	/*
+	 * [Prueba21] Intentar acceder sin estar autenticado a la opción de listado de
+	 * invitaciones de amistad recibida de un usuario estándar. Se deberá volver al
+	 * formulario de login.
+	 */
 	@Test
 	public void PR21() {
-		assertTrue("PR21 sin hacer", false);
+		// Intentamos acceder al listado de usuarios
+		driver.navigate().to("https://localhost:8081/listFriendRequests");
+		// Comprobamos que nos redirige a la página de inicio de sesión
+		PO_View.checkElement(driver, "id", "loginUsuarios");
 	}
 
-	// PR22. Sin hacer /
+	/*
+	 * [Prueba22] Intentar acceder estando autenticado como usuario standard a la
+	 * lista de amigos de otro usuario. Se deberá mostrar un mensaje de acción
+	 * indebida.
+	 */
 	@Test
 	public void PR22() {
 		assertTrue("PR22 sin hacer", false);
