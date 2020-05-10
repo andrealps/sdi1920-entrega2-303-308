@@ -1,68 +1,59 @@
 <div class="people-list" id="people-list">
+
     <!-- Búsqueda por nombre -->
     <div class="search">
         <label>
-            <input type="text" placeholder="Buscar por nombre"/>
+            <input type="text" class="form-control" placeholder="Buscar por nombre" id="filtro-nombre"/>
         </label>
         <button id="searchButton"><i class="fa fa-search"></i></button>
     </div>
-    <ul class="list">
-        <!-- Un amigo -->
-        <li class="clearfix">
-            <div class="about">
-                <div class="nameAndNotification">
-                    <!-- Nombre y apellidos -->
-                    <a onclick="mostrarChatAmigo(0)" class="infoFriend">
-                        <span class="name" id="name_0">Jaime</span>
-                        <span class="surname" id="surname_0">Pérez Álvarez</span>
-                    </a>
-                    <!-- Si hay mensajes sin leer aparece este div -->
-                    <div class="numberNotification">3</div>
-                </div>
-                <!-- Email -->
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i>
-                    <span id="email_0">prueba2@prueba2.com</span>
-                </div>
-            </div>
 
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="nameAndNotification">
-                    <a onclick="mostrarChatAmigo(1)" class="infoFriend">
-                        <span class="name" id="name_1">Aiden</span>
-                        <span class="surname" id="surname_1">Chavez</span>
-                    </a>
-                    <div class="numberNotification">10</div>
-                </div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i>
-                    <span id="email_1">ejemplo2@gmail.com</span>
-                </div>
-            </div>
-        </li>
-
-        <li class="clearfix">
-            <div class="about">
-                <div class="nameAndNotification">
-                    <a onclick="mostrarChatAmigo(2)" class="infoFriend">
-                        <span class="name" id="name_2">Mike</span>
-                        <span class="surname" id="surname_2">Thomas</span>
-                    </a>
-                </div>
-                <div class="status">
-                    <i class="fa fa-envelope-square"></i>
-                    <span id="email_2">ejemplo3@gmail.com</span>
-                </div>
-            </div>
-        </li>
-    </ul>
+    <div id="widget-friends">
+        <ul id="myFriends" class="list">
+        </ul>
+    </div>
 </div>
 
 <script>
+
     window.history.pushState("", "", "/cliente.html?w=friends");
+    var friends;
+
+    function cargarAmigos() {
+        $.ajax({
+            url: URLbase + "/friends",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                friends = respuesta;
+                actualizarLista(friends);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+    function actualizarLista(amigosMostrar) {
+        $("#myFriends").empty(); // Vaciar la tabla
+        for (i = 0; i < amigosMostrar.length; i++) {
+            $("#myFriends").append(
+                "<li class='clearfix'>" +
+                "<div class='about'>" +
+                "<div class='nameAndNotification'>" +
+                "<a onclick=mostrarChatAmigo('" + i + "')class='infoFriend'>" +
+                "<span class='name' id='name'>" + amigosMostrar[i].nombre + "</span>" +
+                "<span class='surname' id='surname'> " + amigosMostrar[i].apellidos + "</span></a></div>" +
+                "<div class='status'>" +
+                "<i class='fa fa-envelope-square'></i>" +
+                "<span id='email'> " + amigosMostrar[i].email + "</span></div></div></li>"
+            );
+        }
+    }
+
+    cargarAmigos();
 
     // Despliega el chat de ese amigo
     function mostrarChatAmigo(index) {
@@ -74,4 +65,17 @@
 
         $("#chatFriend").load("widget-chat.html");
     }
+
+    $('#filtro-nombre').on('input', function (e) {
+        var usuariosFiltrados = [];
+        var nombreFiltro = $("#filtro-nombre").val();
+        for (i = 0; i < friends.length; i++) {
+            if (friends[i].nombre.indexOf(nombreFiltro) != -1) {
+                usuariosFiltrados.push(friends[i]);
+            }
+        }
+        actualizarLista(usuariosFiltrados);
+    });
+
+
 </script>
