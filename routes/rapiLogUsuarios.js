@@ -12,9 +12,7 @@ module.exports = function (app, gestorBD) {
         });
     });
 
-    /**
-     * S1 - Identificarse con usuario – token
-     */
+
     app.post("/api/autenticar/", function (req, res) {
         let seguro = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
