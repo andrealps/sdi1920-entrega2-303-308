@@ -3,7 +3,7 @@
     <!-- Búsqueda por nombre -->
     <div class="search">
         <label>
-            <input type="text" class="form-control" placeholder="Buscar por nombre" id="filtro-nombre"/>
+            <input type="text" placeholder="Buscar por nombre"/>
         </label>
         <button id="searchButton"><i class="fa fa-search"></i></button>
     </div>
@@ -42,12 +42,11 @@
             $("#myFriends").append(
                 "<li class='clearfix'>" +
                 "<div class='about'>" +
-                "<div class='nameAndNotification'>" +
+                `<div class='nameAndNotification' id='dataFriend_${i}'>` +
                 "<a onclick=mostrarChatAmigo(" + i + ") class='infoFriend'>" +
                 "<span class='name' id='name_" + i + "'>" + amigosMostrar[i].nombre + " </span>" +
                 "<span class='surname' id='surname_" + i + "'>" + amigosMostrar[i].apellidos + "</span>" +
                 "</a>" +
-                "<div class='numberNotification'></div>" +
                 "</div>" +
                 "<div class='status'>" +
                 "<i class='fa fa-envelope-square'></i>" +
@@ -66,7 +65,6 @@
             apellidos: $("#surname_" + index).html(),
             email: $("#email_" + index).html()
         };
-
         $("#chatFriend").load("widget-chat.html");
     }
 
@@ -82,4 +80,36 @@
     });
 
 
+    /**
+     function ordenarAmigos(friends) {
+        for (let i = 0; i < friends.length; i++) {
+            cargaMensajes(friends[i].email, function (respuesta) {
+                ordenarPorUltimoMensaje(respuesta.mensajes, )
+            });
+        }
+    }
+     **/
+
+    // Actualiza las notificaciones de los mensajes sin leer en cada amigo
+    function actualizarNotificaciones(friends) {
+        for (let i = 0; i < friends.length; i++) {
+            cargaMensajes(friends[i].email, function (respuesta) {
+                let numSinLeer = numeroMensajesSinLeer(respuesta.mensajes, respuesta.usuario);
+                // Crea una notificación si es necesaria para el amigo
+                if (numSinLeer > 0) crearGloboNotificacion(i, numSinLeer);
+            });
+        }
+    }
+
+    // Devuelve el número de mensajes sin leer
+    function numeroMensajesSinLeer(mensajes, usuario) {
+        return mensajes.filter(m => m.receptor === usuario).length;
+    }
+
+    // Añade el globo de notificación al lado del amigo si tiene alguna notificación
+    function crearGloboNotificacion(indexFriend, numSinLeer) {
+        $(`#dataFriend_${indexFriend}`).append(
+            `<div class="numberNotification">${numSinLeer}</div>`
+        );
+    }
 </script>

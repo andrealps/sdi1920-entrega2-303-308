@@ -25,22 +25,12 @@
     var mensajes;
 
     // Busca los mensajes en la BD y los actualiza
-    function cargarMensajes() {
-        $.ajax({
-            url: URLbase + "/chat/" + amigoSeleccionado.email,
-            type: "GET",
-            data: {},
-            dataType: 'json',
-            headers: {"token": token},
-            success: function (respuesta) {
-                mensajes = respuesta.mensajes;
-                $("#nameSurnameFriendSelected").text(amigoSeleccionado.nombre + " " + amigoSeleccionado.apellidos);
-                marcarComoLeidosNuevos(mensajes, respuesta.usuario);
-                actualizarMensajes(mensajes, respuesta.usuario);
-            },
-            error: function (error) {
-                $("#contenedor-principal").load("widget-login.html");
-            }
+    function actualizaChat() {
+        cargaMensajes(amigoSeleccionado.email, function (respuesta) {
+            mensajes = respuesta.mensajes;
+            $("#nameSurnameFriendSelected").text(amigoSeleccionado.nombre + " " + amigoSeleccionado.apellidos);
+            marcarComoLeidosNuevos(mensajes, respuesta.usuario);
+            actualizarMensajes(mensajes, respuesta.usuario);
         });
     }
 
@@ -146,9 +136,10 @@
 
     // Cada segundo se actualizan los mensajes
     setInterval(function () {
-        cargarMensajes(amigoSeleccionado);
+        actualizaChat();
     }, 1000);
 
+    // Formatea la fecha de un mensaje
     function formatDate(date) {
         let newDate = new Date(date);
         var fecha = newDate.getDate() + "/" + newDate.getMonth() + "/" + newDate.getFullYear() + ", a las "

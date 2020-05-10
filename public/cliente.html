@@ -25,7 +25,7 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav" id="barra-menu">
-                <li><a onclick=widgetChat()>Chat</a></li>
+                <li><a onclick=widgetApp()>Aplicación</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right" id="barra-menu-derecha">
                 <!-- Opciones de menú aqui -->
@@ -58,22 +58,35 @@
         if (w == "login") {
             $("#contenedor-principal").load("widget-login.html");
         }
-        if (w == "friends") {
-            $("#friendsList").load("widget-friends.html");
-            $("#chatFriend").load("widget-chat.html");
+        if (w == "app") {
+            widgetApp();
         }
     }
 
     var amigoSeleccionado;
 
-    function widgetChat() {
-        $("#contenedor-principal").load("widget-friends.html");
-        $("#chatFriend").load("widget-chat.html");
+    function widgetApp() {
+        $("#contenedor-principal").load("widget-app.html");
     }
 
-    //$("#friendsList").load("Antiguowidget-friends.html");
-    //$("#chatFriend").load("widget-chat.html");
-
+    // Carga los mensajes de la aplicación y luego realiza una acción con ellos
+    const cargaMensajes = (userEmail, funcionCallback) => {
+        $.ajax({
+            url: URLbase + "/chat/" + userEmail,
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (respuesta) {
+                console.log(respuesta.mensajes);
+                console.log(respuesta.usuario);
+                funcionCallback(respuesta);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
 
 </script>
 

@@ -25,7 +25,7 @@ module.exports = function (app, gestorBD) {
                     })
                 } else {
                     // Creamos el mensaje y lo insertamos en el chat
-                    var mensaje = {
+                    let mensaje = {
                         //numero_mensaje: friends.chat.length + 1,
                         emisor: res.usuario,
                         receptor: req.body.userTo,
