@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 //Paquetes Selenium 
@@ -67,7 +66,7 @@ public class Tests {
 	public void goToAPI() {
 		driver.navigate().to(URL + "/cliente.html");
 	}
-
+	
 	/**
 	 * [Prueba1] Registro de Usuario con datos válidos
 	 */
@@ -596,15 +595,58 @@ public class Tests {
 		goToAPI();
 		PO_PrivateView.loginAPI(driver, "ejemplo8@gmail.com", "1234");
 		// Comprobamos que hay 3 mensajes sin leer desde las notificaciones
-		elementos = PO_View.checkElement(driver, "free",
-				"//div[contains(text(), '3')]");
+		elementos = PO_View.checkElement(driver, "free", "//div[contains(text(), '3')]");
 		assertTrue(elementos.size() == 1);
 	}
 
-	// PR031. Sin hacer /
+	/*
+	 * [Prueba31] Identificarse con un usuario A que al menos tenga 3 amigos, ir al
+	 * chat del ultimo amigo de la lista y enviarle un mensaje, volver a la lista de
+	 * amigos y comprobar que el usuario al que se le ha enviado el mensaje esta en
+	 * primera posición. Identificarse con el usuario B y enviarle un mensaje al
+	 * usuario A. Volver a identificarse con el usuario A y ver que el usuario que
+	 * acaba de mandarle el mensaje es el primero en su lista de amigos.
+	 */
 	@Test
 	public void PR31() {
-		assertTrue("PR31 sin hacer", false);
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos y comprobamos que vemos la lista de amigos
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Comprobamos el nombre del último usuario (Ander)
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free",
+				"//div[contains(@id, 'dataFriend_2')]//a[contains(@class, 'infoFriend')]//span[contains(text(), 'Ander')]",
+				50);
+		assertTrue(elementos.size() == 1);
+		// Entramos en el último chat
+		elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(@id, 'dataFriend_2')]//a[contains(@class, 'infoFriend')]");
+		elementos.get(0).click();
+		// Enviamos un mensaje a este usuario
+		PO_ChatView.createMessage(driver, "Prueba31_1");
+		// Volvemos a la lista de amigos
+		elementos = PO_View.checkElement(driver, "free", "//a[contains(text(), 'Aplicación')]");
+		elementos.get(0).click();
+		// Vemos que ahora Ander está arriba
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free",
+				"//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]//span[contains(text(), 'Ander')]",
+				50);
+		// Nos identificamos con el usuario ejemplo7@gmail.com
+		goToAPI();
+		PO_PrivateView.loginAPI(driver, "ejemplo7@gmail.com", "1234");
+		// Le mandamos un mensaje al usuario ejemplo5@gmail.com
+		elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]");
+		elementos.get(0).click();
+		// Enviamos tres mensajes a este usuario
+		PO_ChatView.createMessage(driver, "Prueba31_2");
+		// Volvemos a loguearnos con el usuario ejemplo5@gmail.com
+		goToAPI();
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Comprobamos que el nombre del último usuario ha cambiado (ahora es Carla)
+		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free",
+				"//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]//span[contains(text(), 'Carla')]",
+				50);
 	}
 
 }
