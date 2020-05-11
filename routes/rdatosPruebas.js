@@ -85,14 +85,14 @@ module.exports = function (app, swig, gestorBD) {
         });
 
         // Eliminamos todas las peticiones de la BD
-        gestorBD.eliminarPeticiones(function (usuarios) {
+        gestorBD.eliminarElementos('friendRequests', function (usuarios) {
             if (usuarios == null) {
                 res.send("Error al eliminar las peticiones");
             }
         });
 
         // Eliminamos todas las amistades de la BD
-        gestorBD.eliminarAmistades(function (usuarios) {
+        gestorBD.eliminarElementos('friends', function (usuarios) {
             if (usuarios == null) {
                 res.send("Error al eliminar las peticiones");
             }

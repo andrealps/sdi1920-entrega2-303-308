@@ -1,7 +1,7 @@
 module.exports = function (app, gestorBD) {
 
     app.get("/api/usuario", function (req, res) {
-        gestorBD.obtenerUsuarios({}, function (usuarios) {
+        gestorBD.obtenerElementos('usuarios', {}, function (usuarios) {
             if (usuarios == null) {
                 res.status(500);
                 res.json({
@@ -24,7 +24,7 @@ module.exports = function (app, gestorBD) {
             password: seguro
         };
 
-        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+        gestorBD.obtenerElementos('usuarios', criterio, function (usuarios) {
             if (usuarios == null || usuarios.length === 0) {
                 res.status(401);
                 res.json({

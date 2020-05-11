@@ -11,16 +11,16 @@ module.exports = function (app, swig, gestorBD) {
                 {$and: [{friend1: req.params.email}, {friend2: req.session.usuario}]}]
         }
 
-        gestorBD.obtenerAmistades(criterioAmigos, function (amistades) {
-            if (amistades.length == 0) {
+        gestorBD.obtenerElementos('friends', criterioAmigos, function (amistades) {
+            if (amistades.length === 0) {
 
                 // Si ya le ha mandado peticion, no puede volver a enviarsela
                 let criterioPeticiones = {
                     $and: [{userFrom: req.session.usuario}, {userTo: req.params.email}]
-                }
+                };
 
-                gestorBD.obtenerPeticiones(criterioPeticiones, function (peticiones) {
-                    if (peticiones.length == 0) {
+                gestorBD.obtenerElementos('friendRequests', criterioPeticiones, function (peticiones) {
+                    if (peticiones.length === 0) {
 
                         let friendRequest = {
                             userFrom: req.session.usuario,
@@ -28,8 +28,7 @@ module.exports = function (app, swig, gestorBD) {
                             accepted: false
                         };
 
-
-                        gestorBD.insertarPeticion(friendRequest, function (idFriendRequest) {
+                        gestorBD.insertarElementos('friendRequests', friendRequest, function (idFriendRequest) {
                             if (idFriendRequest == null) {
                                 res.send(respuesta);
                             } else {
@@ -61,7 +60,7 @@ module.exports = function (app, swig, gestorBD) {
 
         let criterio = {$and: [{userTo: req.session.usuario}, {accepted: false}]};
 
-        gestorBD.obtenerPeticiones(criterio, function (peticiones) {
+        gestorBD.obtenerElementos('friendRequests', criterio, function (peticiones) {
             if (peticiones == null) {
                 res.send("Error al listar");
             } else {
@@ -99,7 +98,7 @@ module.exports = function (app, swig, gestorBD) {
                             email: req.session.usuario,
                         };
 
-                        gestorBD.obtenerUsuarios(criterio, function (usuario) {
+                        gestorBD.obtenerElementos('usuarios', criterio, function (usuario) {
                             if (usuario == null) {
                                 res.send("Error al obtener la lista de usuarios");
                             } else {
@@ -130,11 +129,12 @@ module.exports = function (app, swig, gestorBD) {
         };
         let update = {accepted: true};
 
-        gestorBD.obtenerPeticiones(criterio, function (peticiones) {
-            for (i = 0; i < peticiones.length; i++) {
+        gestorBD.obtenerElementos('friendRequests', criterio, function (peticiones) {
+            for (let i = 0; i < peticiones.length; i++) {
                 let criterio = {"_id": peticiones[i]._id};
 
-                gestorBD.aceptarPeticion(criterio, update, function (requestAccepted) {
+                // Aceptamos la petición
+                gestorBD.modificarElemento('friendRequests', criterio, update, function (requestAccepted) {
                     if (requestAccepted == null)
                         res.send("Error al aceptar la petición");
 
@@ -145,7 +145,7 @@ module.exports = function (app, swig, gestorBD) {
                 friend1: req.params.email,
                 friend2: req.session.usuario
             };
-            gestorBD.insertarAmistad(friendship, function (friends) {
+            gestorBD.insertarElementos('friends', friendship, function (friends) {
                 if (!friends) {
                     res.send("Error al añadir amigo");
                 } else {
@@ -155,7 +155,7 @@ module.exports = function (app, swig, gestorBD) {
                 }
             })
         });
-    })
+    });
 
 
     /**
@@ -166,15 +166,16 @@ module.exports = function (app, swig, gestorBD) {
         // Busco las amistades en las que aparezca el usuario en sesion
         let criterio = {$or: [{friend1: req.session.usuario}, {friend2: req.session.usuario}]};
 
-        gestorBD.obtenerAmistades(criterio, function (amistades) {
+        // Sacamos los amigos
+        gestorBD.obtenerElementos('friends', criterio, function (amistades) {
             if (amistades == null) {
                 res.send("Error al listar");
             } else {
                 let friends = [];
-                for (i = 0; i < amistades.length; i++) {
-                    if (amistades[i].friend1 == req.session.usuario)
+                for (let i = 0; i < amistades.length; i++) {
+                    if (amistades[i].friend1 === req.session.usuario)
                         friends.push(amistades[i].friend2);
-                    else if (amistades[i].friend2 == req.session.usuario)
+                    else if (amistades[i].friend2 === req.session.usuario)
                         friends.push(amistades[i].friend1);
                 }
 
@@ -207,7 +208,7 @@ module.exports = function (app, swig, gestorBD) {
                             email: req.session.usuario,
                         };
 
-                        gestorBD.obtenerUsuarios(criterio, function (usuario) {
+                        gestorBD.obtenerElementos('usuarios', criterio, function (usuario) {
                             if (usuario == null) {
                                 res.send("Error al obtener la lista de amigos");
                             } else {
