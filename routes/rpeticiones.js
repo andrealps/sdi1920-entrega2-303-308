@@ -5,27 +5,29 @@ module.exports = function (app, swig, gestorBD) {
      */
     app.get("/friendRequest/send/:email", function (req, res) {
 
-        // Si ya le ha mandado peticion, no puede volver a enviarsela
-        let criterioPeticiones = {
-            $and: [{userFrom: req.session.usuario}, {userTo: req.params.email}]
+        // No puede enviar petición a un amigo
+        let criterioAmigos = {
+            $or: [{$and: [{friend1: req.session.usuario}, {friend2: req.params.email}]},
+                {$and: [{friend1: req.params.email}, {friend2: req.session.usuario}]}]
         }
 
-        gestorBD.obtenerPeticiones(criterioPeticiones, function (peticiones) {
-            if (peticiones.length == 0) {
+        gestorBD.obtenerAmistades(criterioAmigos, function (amistades) {
+            if (amistades.length == 0) {
 
-                // No puede enviar petición a un amigo
-                let criterioAmigos = {
-                    $or: [{$and: [{friend1: req.session.usuario}, {friend2: req.params.email}]},
-                        {$and: [{friend1: req.params.email}, {friend2: req.session.usuario}]}]
+                // Si ya le ha mandado peticion, no puede volver a enviarsela
+                let criterioPeticiones = {
+                    $and: [{userFrom: req.session.usuario}, {userTo: req.params.email}]
                 }
 
-                gestorBD.obtenerAmistades(criterioAmigos, function (amistades) {
-                    if (amistades.length == 0) {
+                gestorBD.obtenerPeticiones(criterioPeticiones, function (peticiones) {
+                    if (peticiones.length == 0) {
+
                         let friendRequest = {
                             userFrom: req.session.usuario,
                             userTo: req.params.email,
                             accepted: false
                         };
+
 
                         gestorBD.insertarPeticion(friendRequest, function (idFriendRequest) {
                             if (idFriendRequest == null) {
@@ -36,16 +38,17 @@ module.exports = function (app, swig, gestorBD) {
                                     "&tipoMensaje=alert-success");
                             }
                         });
+
                     } else {
                         res.redirect("/listaUsuarios" +
-                            "?mensaje=¡Ya sois amigos!" +
+                            "?mensaje=Ya has mandado petición a este usuario" +
                             "&tipoMensaje=alert-danger ");
                     }
                 })
 
             } else {
                 res.redirect("/listaUsuarios" +
-                    "?mensaje=Ya has mandado petición a este usuario" +
+                    "?mensaje=¡Ya sois amigos!" +
                     "&tipoMensaje=alert-danger ");
             }
         })
