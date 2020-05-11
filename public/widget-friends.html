@@ -31,7 +31,7 @@
             success: function (respuesta) {
                 friends = respuesta.friends;
                 ordenarAmigos(friends, respuesta.ultsMensajes);
-                actualizarLista(friends, respuesta.usuario);
+                actualizarLista(friends);
             },
             error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");
@@ -40,20 +40,21 @@
     }
 
     function ordenarAmigos(friends, ultsMensajes) {
-
+        console.log("aqui");
         for (let i = 0; i < friends.length; i++) {
             for (let j = 0; j < ultsMensajes.length; j++) {
                 if (friends[i].email === ultsMensajes[j]._id.emisor || friends[i].email === ultsMensajes[j]._id.receptor) {
-                    friends[i].ultimoMensaje = ultsMensajes[j].fecha;
+                    friends[i].ultimoMensaje = new Date(ultsMensajes[j].fecha);
                 }
             }
         }
 
         friends.sort(function (amigoA, amigoB) {
-            return new Date(amigoB.ultimoMensaje) - new Date(amigoA.ultimoMensaje);
-        });
+            if (amigoA.ultimoMensaje === undefined) amigoA.ultimoMensaje = new Date(0);
+            if (amigoB.ultimoMensaje === undefined) amigoB.ultimoMensaje = new Date(0);
 
-        actualizarLista(friends);
+            return amigoB.ultimoMensaje - amigoA.ultimoMensaje;
+        });
     }
 
     function actualizarLista(amigosMostrar) {
