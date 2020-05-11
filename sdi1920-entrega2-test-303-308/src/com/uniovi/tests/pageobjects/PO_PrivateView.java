@@ -49,8 +49,6 @@ public class PO_PrivateView extends PO_NavView {
 
 		By boton = By.id("btnSearch");
 		driver.findElement(boton).click();
-	}
-	
-	
+	}	
 
 }

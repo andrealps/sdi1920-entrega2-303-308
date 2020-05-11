@@ -25,7 +25,8 @@ public class Tests {
 	// En Windows (Debe ser la versión 65.0.1 y desactivar las actualizaciones
 	// automáticas)):
 	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-	//static String Geckdriver024 = "C:\\Users\\SARA\\Desktop\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
+	// static String Geckdriver024 =
+	// "C:\\Users\\SARA\\Desktop\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
 	static String Geckdriver024 = "D:\\UNIVERSIDAD\\Tercer curso\\SDI\\material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
@@ -62,7 +63,7 @@ public class Tests {
 		// Cerramos el navegador al finalizar las pruebas
 		// driver.quit();
 	}
-	
+
 	public void goToAPI() {
 		driver.navigate().to(URL + "/cliente.html");
 	}
@@ -500,7 +501,8 @@ public class Tests {
 	}
 
 	/*
-	 * Prueba27] Acceder a la lista de mensajes de un amigo “chat”, la lista debe contener al menos tres mensajes.
+	 * Prueba27] Acceder a la lista de mensajes de un amigo “chat”, la lista debe
+	 * contener al menos tres mensajes.
 	 */
 	@Test
 	public void PR27() {
@@ -509,11 +511,32 @@ public class Tests {
 		// Nos logueamos y comprobamos que vemos la lista de amigos
 		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
 		// Entramos en el chat con el usuario ejemplo6@gmail.com
-		List<WebElement> elementos = PO_View.checkElement(driver, "free", "//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]");
+		List<WebElement> elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]");
 		elementos.get(0).click();
 		// Comprobamos que hay 3 mensajes
 		elementos = PO_View.checkElement(driver, "free", "//span[contains(@class, 'message-data-time')]");
 		assertTrue(elementos.size() == 3);
+	}
+
+	/*
+	 * Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo
+	 * mensaje, validar que el mensaje aparece en la lista de mensajes.
+	 */
+	@Test
+	public void PR28() {
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos y comprobamos que vemos la lista de amigos
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Entramos en el chat con el usuario ejemplo6@gmail.com
+		List<WebElement> elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]");
+		elementos.get(0).click();
+		// Enviamos un mensaje a este usuario
+		PO_ChatView.createMessage(driver, "Prueba28");
+		elementos = PO_View.checkElement(driver, "free", "//span[contains(@class, 'message-data-time')]");
+		assertTrue(elementos.size() == 4);
 	}
 
 	// PR029. Sin hacer /
