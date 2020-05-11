@@ -88,6 +88,7 @@ app.use('/api/friends', routerUsuarioToken);
 app.use('/api/mensaje', routerUsuarioToken);
 app.use('/api/chat/:otherUser', routerUsuarioToken);
 app.use('/api/chat/leer/:idMensaje', routerUsuarioToken);
+app.use('/api/chat/last', routerUsuarioToken);
 
 // routerUsuarioSession
 let routerUsuarioSession = express.Router();
