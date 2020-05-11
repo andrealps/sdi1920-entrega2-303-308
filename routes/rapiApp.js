@@ -1,5 +1,7 @@
 module.exports = function (app, gestorBD) {
-    // Obtener lista de amigos con número de mensajes sin leer
+    /**
+     * Obtener número de mensajes sin leer para el usuario
+     */
     app.get("/api/chat/last", function (req, res) {
         // Buscamos las amistades en la base de datos
         let criterio = {
@@ -43,12 +45,11 @@ module.exports = function (app, gestorBD) {
 
     });
 
-
     /**
      * S2 - Lista de amigos
      */
     app.get("/api/friends", function (req, res) {
-        var criterio = {
+        let criterio = {
             $and: [{$or: [{friend1: res.usuario}, {friend2: res.usuario}]}]
         };
         gestorBD.obtenerAmistades(criterio, function (amistades) {
@@ -58,8 +59,8 @@ module.exports = function (app, gestorBD) {
                     error: "Se ha producido un error"
                 })
             } else {
-                var amigos = [];
-                for (i = 0; i < amistades.length; i++) {
+                let amigos = [];
+                for (let i = 0; i < amistades.length; i++) {
                     if (amistades[i].friend1 == res.usuario)
                         amigos.push(amistades[i].friend2);
                     else
@@ -74,11 +75,27 @@ module.exports = function (app, gestorBD) {
                             error: "Se ha producido un error"
                         })
                     } else {
-                        res.status(200);
-                        res.json({
-                            friends: usuarios,
-                            usuario: res.usuario
-                        });
+                        criterio = {
+                            $or: [{emisor: {$in: amigos}, receptor: res.usuario},
+                                {receptor: res.usuario, emisor: {$in: amigos}}
+                            ]
+                        };
+                        // Ahora obtenemos el último mensaje en su conversación
+                        gestorBD.obtenerUltimoMensaje(amigos, res.usuario, function (ultsMensajes) {
+                            if (ultsMensajes == null) {
+                                res.status(500);
+                                res.json({
+                                    error: "Se ha producido un error"
+                                })
+                            } else {
+                                res.status(200);
+                                res.json({
+                                    ultsMensajes: ultsMensajes,
+                                    friends: usuarios,
+                                    usuario: res.usuario
+                                });
+                            }
+                        })
                     }
                 });
             }

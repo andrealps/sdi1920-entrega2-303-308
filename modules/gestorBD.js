@@ -168,13 +168,13 @@ module.exports = {
     },
 
     // MODIFICAR PETICIONES
-    aceptarPeticion: function(criterio, update, funcionCallback) {
-        this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
+    aceptarPeticion: function (criterio, update, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {
                 funcionCallback(null);
             } else {
                 let collection = db.collection('friendRequests');
-                collection.update(criterio, {$set: update}, function(err, result) {
+                collection.update(criterio, {$set: update}, function (err, result) {
                     if (err) {
                         funcionCallback(null);
                     } else {
@@ -256,6 +256,33 @@ module.exports = {
                         funcionCallback(null);
                     } else {
                         funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    obtenerUltimoMensaje: function (amigos, usuario, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection('chats');
+                collection.aggregate([
+                    {
+                        $match: {
+                            $or: [
+                                {emisor: {$in: amigos}, receptor: usuario},
+                                {emisor: usuario, receptor: {$in: amigos}}
+                            ]
+                        }
+                    },
+                    {$group: {_id: {emisor: "$emisor", receptor: "$receptor"}, fecha: {$last: "$fecha"}}}
+                ]).toArray(function (err, lista) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(lista);
                     }
                     db.close();
                 });

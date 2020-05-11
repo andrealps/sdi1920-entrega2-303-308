@@ -20,7 +20,6 @@
     var friends;
 
     var notificaciones = -1;
-    var nuevasNotificaciones = 0;
 
     function cargarAmigos() {
         $.ajax({
@@ -31,7 +30,7 @@
             headers: {"token": token},
             success: function (respuesta) {
                 friends = respuesta.friends;
-                ordenarAmigos();
+                ordenarAmigos(friends, respuesta.ultsMensajes);
                 actualizarLista(friends, respuesta.usuario);
             },
             error: function (error) {
@@ -40,15 +39,18 @@
         });
     }
 
-    function ordenarAmigos() {
+    function ordenarAmigos(friends, ultsMensajes) {
+
         for (let i = 0; i < friends.length; i++) {
-            cargaMensajes(friends[i].email, function (respuesta) {
-                friends[i].ultimoMensaje = respuesta.mensajes.map(m => m.fecha).slice(-1)[0];
-            });
+            for (let j = 0; j < ultsMensajes.length; j++) {
+                if (friends[i].email === ultsMensajes[j]._id.emisor || friends[i].email === ultsMensajes[j]._id.receptor) {
+                    friends[i].ultimoMensaje = ultsMensajes[j].fecha;
+                }
+            }
         }
 
         friends.sort(function (amigoA, amigoB) {
-            return amigoB.ultimoMensaje - amigoA.ultimoMensaje;
+            return new Date(amigoB.ultimoMensaje) - new Date(amigoA.ultimoMensaje);
         });
 
         actualizarLista(friends);
@@ -156,6 +158,6 @@
     // Cada segundo se actualizan los amigos
     setInterval(function () {
         actualizarNotificaciones();
-    }, 8000);
+    }, 1000);
 
 </script>
