@@ -24,9 +24,8 @@ public class Tests {
 	// En Windows (Debe ser la versión 65.0.1 y desactivar las actualizaciones
 	// automáticas)):
 	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-	// static String Geckdriver024 =
-	// "C:\\Users\\SARA\\Desktop\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
-	static String Geckdriver024 = "D:\\UNIVERSIDAD\\Tercer curso\\SDI\\material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
+	static String Geckdriver024 = "C:\\Users\\SARA\\Desktop\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
+	//static String Geckdriver024 = "D:\\UNIVERSIDAD\\Tercercurso\\SDI\\material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
 	static String URL = "https://localhost:8081";
@@ -60,7 +59,7 @@ public class Tests {
 	@AfterClass
 	static public void end() {
 		// Cerramos el navegador al finalizar las pruebas
-		// driver.quit();
+		//driver.quit();
 	}
 
 	public void goToAPI() {
@@ -301,7 +300,7 @@ public class Tests {
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	/*
+	/**
 	 * [Prueba15] Desde el listado de usuarios de la aplicación, enviar una
 	 * invitación de amistad a un usuario. Comprobar que la solicitud de amistad
 	 * aparece en el listado de invitaciones
@@ -334,7 +333,7 @@ public class Tests {
 
 	}
 
-	/*
+	/**
 	 * [Prueba16] Desde el listado de usuarios de la aplicación, enviar una
 	 * invitación de amistad a un usuario al que ya le habíamos enviado la
 	 * invitación previamente. No debería dejarnos enviar la invitación
@@ -356,7 +355,7 @@ public class Tests {
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	/*
+	/**
 	 * [Prueba17] Mostrar el listado de invitaciones de amistad recibidas. Comprobar
 	 * con un listado que contenga varias invitaciones recibidas.
 	 */
@@ -400,7 +399,7 @@ public class Tests {
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	/*
+	/**
 	 * [Prueba18] Sobre el listado de invitaciones recibidas. Hacer click en el
 	 * botón/enlace de una de ellas y comprobar que dicha solicitud desaparece del
 	 * listado de invitaciones.
@@ -427,7 +426,7 @@ public class Tests {
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	/*
+	/**
 	 * [Prueba19] Mostrar el listado de amigos de un usuario. Comprobar que el
 	 * listado contiene los amigos que deben ser.
 	 */
@@ -450,7 +449,7 @@ public class Tests {
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
 
-	/*
+	/**
 	 * [Prueba20] Intentar acceder sin estar autenticado a la opción de listado de
 	 * usuarios. Se deberá volver al formulario de login.
 	 */
@@ -462,7 +461,7 @@ public class Tests {
 		PO_View.checkElement(driver, "id", "loginUsuarios");
 	}
 
-	/*
+	/**
 	 * [Prueba21] Intentar acceder sin estar autenticado a la opción de listado de
 	 * invitaciones de amistad recibida de un usuario estándar. Se deberá volver al
 	 * formulario de login.
@@ -475,40 +474,74 @@ public class Tests {
 		PO_View.checkElement(driver, "id", "loginUsuarios");
 	}
 
-	/*
+	/**
 	 * [Prueba23] Inicio de sesión con datos válidos.
 	 */
 	@Test
 	public void PR23() {
-		// Intentamos acceder al listado de usuarios
-		driver.navigate().to("https://localhost:8081/cliente.html");
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos
+		PO_PrivateView.loginAPI(driver, "ejemplo1@gmail.com", "1234");
+	}
+
+	/**
+	 * [Prueba24] Inicio de sesión con datos inválidos (usuario no existente en la
+	 * aplicación).
+	 */
+	@Test
+	public void PR24() {
+		// Vamos a la URL de la API
+		goToAPI();
 		// Comprobamos que nos redirige a la página de inicio de sesión
 		PO_View.checkElement(driver, "id", "email");
 		// Rellenamos el formulario
-		PO_LoginView.fillForm(driver, "ejemplo1@gmail.com", "1234");
-		// Comprobamos que nos redirige al chat
-		PO_View.checkElement(driver, "id", "people-list");
+		PO_LoginView.fillForm(driver, "sara@gmail.com", "sara");
+		// Comprobamos que nos sale un mensaje indicando usuario no encontrado
+		SeleniumUtils.textoPresentePagina(driver, "Usuario no encontrado");
 	}
 
-	// PR24. Sin hacer /
-	@Test
-	public void PR24() {
-		assertTrue("PR24 sin hacer", false);
-	}
-
-	// PR25. Sin hacer /
+	/**
+	 * [Prueba25] Acceder a la lista de amigos de un usuario, que al menos tenga
+	 * tres amigos.
+	 */
 	@Test
 	public void PR25() {
-		assertTrue("PR25 sin hacer", false);
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Comprobamos que tiene tres amigos
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free",
+				"//span[contains(@class, 'surname')]", PO_View.getTimeout());
+		assertTrue(elementos.size() == 3);
 	}
 
-	// PR26. Sin hacer /
+	/**
+	 * [Prueba26] Acceder a la lista de amigos de un usuario, y realizar un filtrado
+	 * para encontrar a un amigo concreto, el nombre a buscar debe coincidir con el
+	 * de un amigo.
+	 */
 	@Test
 	public void PR26() {
-		assertTrue("PR26 sin hacer", false);
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Esperamos que carguen los amigos
+		List<WebElement> elementos = SeleniumUtils.EsperaCargaPagina(driver, "free",
+				"//span[contains(@class, 'surname')]", PO_View.getTimeout());
+		assertTrue(elementos.size() == 3);
+		// Buscamos a Ander
+		WebElement texto = driver.findElement(By.id("filtro-nombre"));
+		texto.click();
+		texto.clear();
+		texto.sendKeys("And");
+		// Comprobamos que aparece el usuario que corresponde
+		PO_View.checkElement(driver, "text", "ejemplo6@gmail.com");
 	}
 
-	/*
+	/**
 	 * [Prueba27] Acceder a la lista de mensajes de un amigo “chat”, la lista debe
 	 * contener al menos tres mensajes.
 	 */
@@ -527,7 +560,7 @@ public class Tests {
 		assertTrue(elementos.size() == 3);
 	}
 
-	/*
+	/**
 	 * [Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo
 	 * mensaje, validar que el mensaje aparece en la lista de mensajes.
 	 */
@@ -547,7 +580,7 @@ public class Tests {
 		assertTrue(elementos.size() == 4);
 	}
 
-	/*
+	/**
 	 * [Prueba29] Identificarse en la aplicación y enviar un mensaje a un amigo,
 	 * validar que el mensaje enviado aparece en el chat. Identificarse después con
 	 * el usuario que recibido el mensaje y validar que tiene un mensaje sin leer,

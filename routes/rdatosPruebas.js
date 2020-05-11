@@ -101,70 +101,96 @@ module.exports = function (app, swig, gestorBD) {
         // Eliminamos los chats
         gestorBD.eliminarElementos('chats', function (result) {
                 if (result == null) {
-                    res.send("Error al eliminar los usuarios");
+                    res.send("Error al eliminar los chats");
                 } else {
-                    // Nuevas amistades
-                    let amistades = [
-                        {
-                            "friend1": "ejemplo5@gmail.com",
-                            "friend2": "ejemplo6@gmail.com"
-                        },
-                        {
-                            "friend1": "ejemplo5@gmail.com",
-                            "friend2": "ejemplo7@gmail.com"
-                        },
-                        {
-                            "friend1": "ejemplo5@gmail.com",
-                            "friend2": "ejemplo8@gmail.com"
-                        }
-                    ];
 
-                    gestorBD.insertarElementos('friends', amistades, function (result) {
+                    // Nuevas peticiones
+                    let peticiones = [
+                        {
+                            "userFrom": "ejemplo5@gmail.com",
+                            "userTo": "ejemplo6@gmail.com",
+                            "accepted": "true"
+                        },
+                        {
+                            "userFrom": "ejemplo5@gmail.com",
+                            "userTo": "ejemplo7@gmail.com",
+                            "accepted": "true"
+                        },
+                        {
+                            "userFrom": "ejemplo5@gmail.com",
+                            "userTo": "ejemplo8@gmail.com",
+                            "accepted": "true"
+                        }
+                    ]
+
+                    gestorBD.insertarElementos('friendRequests', peticiones, function (result) {
                         if (result == null) {
-                            res.send("Error al insertar las amistades");
+                            res.send("Error al insertar las peticiones");
                         } else {
-                            let chats = [
+                            // Nuevas amistades
+                            let amistades = [
                                 {
-                                    "emisor": "ejemplo8@gmail.com",
-                                    "receptor": "ejemplo5@gmail.com",
-                                    "texto": "mensaje1",
-                                    "fecha": new Date(),
-                                    "leido": true
+                                    "friend1": "ejemplo5@gmail.com",
+                                    "friend2": "ejemplo6@gmail.com"
                                 },
                                 {
-                                    "emisor": "ejemplo7@gmail.com",
-                                    "receptor": "ejemplo5@gmail.com",
-                                    "texto": "mensaje2",
-                                    "fecha": new Date(),
-                                    "leido": true
+                                    "friend1": "ejemplo5@gmail.com",
+                                    "friend2": "ejemplo7@gmail.com"
                                 },
                                 {
-                                    "emisor": "ejemplo6@gmail.com",
-                                    "receptor": "ejemplo5@gmail.com",
-                                    "texto": "mensaje3",
-                                    "fecha": new Date(),
-                                    "leido": true
-                                },
-                                {
-                                    "emisor": "ejemplo6@gmail.com",
-                                    "receptor": "ejemplo5@gmail.com",
-                                    "texto": "mensaje4",
-                                    "fecha": new Date(),
-                                    "leido": true
-                                },
-                                {
-                                    "emisor": "ejemplo6@gmail.com",
-                                    "receptor": "ejemplo5@gmail.com",
-                                    "texto": "mensaje5",
-                                    "fecha": new Date(),
-                                    "leido": true
+                                    "friend1": "ejemplo5@gmail.com",
+                                    "friend2": "ejemplo8@gmail.com"
                                 }
                             ];
 
-                            // Nuevos chats
-                            gestorBD.insertarElementos('chats', chats, function (result) {
+                            gestorBD.insertarElementos('friends', amistades, function (result) {
                                 if (result == null) {
-                                    res.send("Error al insertar los chats");
+                                    res.send("Error al insertar las amistades");
+                                } else {
+                                    let chats = [
+                                        {
+                                            "emisor": "ejemplo8@gmail.com",
+                                            "receptor": "ejemplo5@gmail.com",
+                                            "texto": "mensaje1",
+                                            "fecha": new Date(),
+                                            "leido": true
+                                        },
+                                        {
+                                            "emisor": "ejemplo7@gmail.com",
+                                            "receptor": "ejemplo5@gmail.com",
+                                            "texto": "mensaje2",
+                                            "fecha": new Date(),
+                                            "leido": true
+                                        },
+                                        {
+                                            "emisor": "ejemplo6@gmail.com",
+                                            "receptor": "ejemplo5@gmail.com",
+                                            "texto": "mensaje3",
+                                            "fecha": new Date(),
+                                            "leido": true
+                                        },
+                                        {
+                                            "emisor": "ejemplo6@gmail.com",
+                                            "receptor": "ejemplo5@gmail.com",
+                                            "texto": "mensaje4",
+                                            "fecha": new Date(),
+                                            "leido": true
+                                        },
+                                        {
+                                            "emisor": "ejemplo6@gmail.com",
+                                            "receptor": "ejemplo5@gmail.com",
+                                            "texto": "mensaje5",
+                                            "fecha": new Date(),
+                                            "leido": true
+                                        }
+                                    ];
+
+                                    // Nuevos chats
+                                    gestorBD.insertarElementos('chats', chats, function (result) {
+                                        if (result == null) {
+                                            res.send("Error al insertar los chats");
+                                        }
+                                    });
                                 }
                             });
                         }
