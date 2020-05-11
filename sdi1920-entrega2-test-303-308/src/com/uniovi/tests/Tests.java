@@ -53,8 +53,8 @@ public class Tests {
 	@BeforeClass
 	static public void begin() {
 		// Configuramos las pruebas.
-		// Fijamos el timeout en cada opción de carga de una vista. 2 segundos.
-		PO_View.setTimeout(20);
+		// Fijamos el timeout en cada opción de carga de una vista
+		PO_View.setTimeout(30);
 		driver.navigate().to(URLreiniciarBD);
 	}
 
@@ -571,10 +571,34 @@ public class Tests {
 
 	}
 
-	// PR030. Sin hacer /
+	/*
+	 * [Prueba30] Identificarse en la aplicación y enviar tres mensajes a un amigo,
+	 * validar que los mensajes enviados aparecen en el chat. Identificarse después
+	 * con el usuario que recibido el mensaje y validar que el número de mensajes
+	 * sin leer aparece en la propia lista de amigos.
+	 * 
+	 */
 	@Test
 	public void PR30() {
-		assertTrue("PR30 sin hacer", false);
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos y comprobamos que vemos la lista de amigos
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Entramos en el chat con el usuario ejemplo8@gmail.com
+		List<WebElement> elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(@id, 'dataFriend_2')]//a[contains(@class, 'infoFriend')]");
+		elementos.get(0).click();
+		// Enviamos tres mensajes a este usuario
+		PO_ChatView.createMessage(driver, "Prueba30_1");
+		PO_ChatView.createMessage(driver, "Prueba30_2");
+		PO_ChatView.createMessage(driver, "Prueba30_3");
+		// Nos logueamos con el otro usuario
+		goToAPI();
+		PO_PrivateView.loginAPI(driver, "ejemplo8@gmail.com", "1234");
+		// Comprobamos que hay 3 mensajes sin leer desde las notificaciones
+		elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(text(), '3')]");
+		assertTrue(elementos.size() == 1);
 	}
 
 	// PR031. Sin hacer /
