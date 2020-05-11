@@ -127,26 +127,12 @@ module.exports = function (app, swig, gestorBD) {
                                 {
                                     "emisor": "ejemplo8@gmail.com",
                                     "receptor": "ejemplo5@gmail.com",
-                                    "texto": "mensaje4",
-                                    "fecha": new Date(),
-                                    "leido": true
-                                },
-                                {
-                                    "emisor": "ejemplo7@gmail.com",
-                                    "receptor": "ejemplo5@gmail.com",
-                                    "texto": "mensaje5",
-                                    "fecha": new Date(),
-                                    "leido": true
-                                },
-                                {
-                                    "emisor": "ejemplo6@gmail.com",
-                                    "receptor": "ejemplo5@gmail.com",
                                     "texto": "mensaje1",
                                     "fecha": new Date(),
                                     "leido": true
                                 },
                                 {
-                                    "emisor": "ejemplo6@gmail.com",
+                                    "emisor": "ejemplo7@gmail.com",
                                     "receptor": "ejemplo5@gmail.com",
                                     "texto": "mensaje2",
                                     "fecha": new Date(),
@@ -156,6 +142,20 @@ module.exports = function (app, swig, gestorBD) {
                                     "emisor": "ejemplo6@gmail.com",
                                     "receptor": "ejemplo5@gmail.com",
                                     "texto": "mensaje3",
+                                    "fecha": new Date(),
+                                    "leido": true
+                                },
+                                {
+                                    "emisor": "ejemplo6@gmail.com",
+                                    "receptor": "ejemplo5@gmail.com",
+                                    "texto": "mensaje4",
+                                    "fecha": new Date(),
+                                    "leido": true
+                                },
+                                {
+                                    "emisor": "ejemplo6@gmail.com",
+                                    "receptor": "ejemplo5@gmail.com",
+                                    "texto": "mensaje5",
                                     "fecha": new Date(),
                                     "leido": true
                                 }

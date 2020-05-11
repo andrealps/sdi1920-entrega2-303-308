@@ -501,7 +501,7 @@ public class Tests {
 	}
 
 	/*
-	 * Prueba27] Acceder a la lista de mensajes de un amigo “chat”, la lista debe
+	 * [Prueba27] Acceder a la lista de mensajes de un amigo “chat”, la lista debe
 	 * contener al menos tres mensajes.
 	 */
 	@Test
@@ -520,7 +520,7 @@ public class Tests {
 	}
 
 	/*
-	 * Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo
+	 * [Prueba28] Acceder a la lista de mensajes de un amigo “chat” y crear un nuevo
 	 * mensaje, validar que el mensaje aparece en la lista de mensajes.
 	 */
 	@Test
@@ -539,10 +539,36 @@ public class Tests {
 		assertTrue(elementos.size() == 4);
 	}
 
-	// PR029. Sin hacer /
+	/*
+	 * [Prueba29] Identificarse en la aplicación y enviar un mensaje a un amigo,
+	 * validar que el mensaje enviado aparece en el chat. Identificarse después con
+	 * el usuario que recibido el mensaje y validar que tiene un mensaje sin leer,
+	 * entrar en el chat y comprobar que el mensaje pasa a tener el estado leído.
+	 * 
+	 */
 	@Test
 	public void PR29() {
-		assertTrue("PR29 sin hacer", false);
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos y comprobamos que vemos la lista de amigos
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Entramos en el chat con el usuario ejemplo7@gmail.com
+		List<WebElement> elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(@id, 'dataFriend_1')]//a[contains(@class, 'infoFriend')]");
+		elementos.get(0).click();
+		// Enviamos un mensaje a este usuario
+		PO_ChatView.createMessage(driver, "Prueba29");
+		// Nos logueamos con el otro usuario
+		goToAPI();
+		PO_PrivateView.loginAPI(driver, "ejemplo7@gmail.com", "1234");
+		// Entramos en el chat con el usuario ejemplo5@gmail.com
+		elementos = PO_View.checkElement(driver, "free",
+				"//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]");
+		elementos.get(0).click();
+		// Comprobamos que hay un mensaje del usuario ejemplo5@gmail.com
+		elementos = PO_View.checkElement(driver, "free", "//div[contains(text(), 'Prueba29')]");
+		assertTrue(elementos.size() == 1);
+
 	}
 
 	// PR030. Sin hacer /
