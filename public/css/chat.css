@@ -42,7 +42,7 @@ a {
 .container {
     height: 80vh;
     margin: 0 auto;
-    background: #ebeef1;
+    background: #ffffff;
     border-radius: 5px;
     padding: 0;
 }
@@ -281,3 +281,33 @@ a {
 .chatFriend{
     background-color: #E38968;
 }
+
+.login {
+    width: 30%;
+    height: 100%;
+    float: left;
+}
+
+#boton-login {
+    color: #ffffff;
+    font-size: 1.2em;
+    background: #2eacde;
+    margin-top: 10px;
+    position: relative;
+}
+
+#email {
+   margin-bottom: 10px;
+    padding: 5px;
+}
+
+.col-sm-offset-2 {
+    margin-left: 1px;
+}
+.control-label {
+    margin-top: 10px;
+    margin-right: 2px;
+}
+
+
+
