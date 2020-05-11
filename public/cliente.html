@@ -78,8 +78,6 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                console.log(respuesta.mensajes);
-                console.log(respuesta.usuario);
                 funcionCallback(respuesta);
             },
             error: function (error) {

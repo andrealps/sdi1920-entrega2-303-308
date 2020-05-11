@@ -124,7 +124,7 @@ require("./routes/rlogUsuarios")(app, swig, gestorBD);
 require("./routes/rdatosPruebas")(app, swig, gestorBD);
 require("./routes/rpeticiones.js")(app, swig, gestorBD);
 require("./routes/rapiLogUsuarios.js")(app, gestorBD);
-require("./routes/rapiChat.js")(app, gestorBD);
+require("./routes/rapiApp.js")(app, gestorBD);
 
 app.get('/', function (req, res) {
     res.redirect('/listaUsuarios');

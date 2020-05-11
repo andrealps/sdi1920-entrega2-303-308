@@ -41,39 +41,4 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
-
-    app.get("/api/friends", function (req, res) {
-        var criterio = {
-            $and: [{$or: [{friend1: res.usuario}, {friend2: res.usuario}]}]
-        };
-        gestorBD.obtenerAmistades(criterio, function (amistades) {
-            if (amistades == null) {
-                res.status(500);
-                res.json({
-                    error: "Se ha producido un error"
-                })
-            } else {
-                var amigos = [];
-                for (i = 0; i < amistades.length; i++) {
-                    if (amistades[i].friend1 == res.usuario)
-                        amigos.push(amistades[i].friend2);
-                    else
-                        amigos.push(amistades[i].friend1);
-                }
-
-                var criterio2 = {email: {$in: amigos}};
-                gestorBD.obtenerUsuarios(criterio2, function (usuarios) {
-                    if (usuarios == null) {
-                        res.status(500);
-                        res.json({
-                            error: "Se ha producido un error"
-                        })
-                    } else {
-                        res.status(200);
-                        res.send(JSON.stringify(usuarios));
-                    }
-                });
-            }
-        });
-    });
 };
