@@ -48,7 +48,8 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                $("#inputMensaje").empty();
+                //$("#inputMensaje").empty();
+                $('#inputMensaje').val('');
                 //cargarMensajes(amigoSeleccionado);
             },
             error: function (error) {
