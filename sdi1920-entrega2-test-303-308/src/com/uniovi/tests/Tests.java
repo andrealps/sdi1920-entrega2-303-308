@@ -59,7 +59,7 @@ public class Tests {
 	@AfterClass
 	static public void end() {
 		// Cerramos el navegador al finalizar las pruebas
-		//driver.quit();
+		driver.quit();
 	}
 
 	public void goToAPI() {
