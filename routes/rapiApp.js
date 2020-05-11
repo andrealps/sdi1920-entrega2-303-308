@@ -1,4 +1,49 @@
 module.exports = function (app, gestorBD) {
+    // Obtener lista de amigos con número de mensajes sin leer
+    app.get("/api/chat/last", function (req, res) {
+        // Buscamos las amistades en la base de datos
+        let criterio = {
+            $and: [{$or: [{friend1: res.usuario}, {friend2: res.usuario}]}]
+        };
+        gestorBD.obtenerElementos('friends', criterio, function (friends) {
+            if (friends == null || friends.length === 0) {
+                res.status(500);
+                res.json({
+                    error: "Error"
+                })
+            } else {
+                let amigos = [];
+                for (let i = 0; i < friends.length; i++) {
+                    if (friends[i].friend1 === res.usuario)
+                        amigos.push(friends[i].friend2);
+                    else
+                        amigos.push(friends[i].friend1);
+                }
+
+                criterio = {
+                    $and: [{emisor: {$in: amigos}, receptor: res.usuario, leido: false}]
+                };
+                // Obtenemos los mensajes del chat entre ellos
+                gestorBD.obtenerElementos('chats', criterio, function (chats) {
+                    if (chats == null) {
+                        res.status(500);
+                        res.json({
+                            error: "Error al buscar los chats"
+                        })
+                    } else {
+                        let sinLeer = chats.length;
+                        res.status(200);
+                        res.json({
+                            sinLeer: sinLeer
+                        });
+                    }
+                });
+            }
+        });
+
+    });
+
+
     /**
      * S2 - Lista de amigos
      */

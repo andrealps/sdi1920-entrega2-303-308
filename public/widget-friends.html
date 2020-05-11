@@ -19,6 +19,9 @@
     window.history.pushState("", "", "/cliente.html?w=friends");
     var friends;
 
+    var notificaciones = -1;
+    var nuevasNotificaciones = 0;
+
     function cargarAmigos() {
         $.ajax({
             url: URLbase + "/friends",
@@ -77,8 +80,6 @@
         }
     }
 
-    cargarAmigos();
-
     // Despliega el chat de ese amigo
     function mostrarChatAmigo(index) {
         amigoSeleccionado = {
@@ -117,14 +118,44 @@
 
     // Añade el globo de notificación al lado del amigo si tiene alguna notificación
     function crearGloboNotificacion(indexFriend, numSinLeer) {
-        $(`#dataFriend_${indexFriend}`).append(
-            `<div class="numberNotification">${numSinLeer}</div>`
-        );
+        if ($("#notification_" + indexFriend).text() === "" || $("#notification_" + indexFriend).text() === undefined) {
+            $(`#dataFriend_${indexFriend}`).append(
+                `<div class="numberNotification" id="notification_${indexFriend}">${numSinLeer}</div>`
+            );
+        } else {
+            $(`#notification_${indexFriend}`).text(numSinLeer);
+        }
+
     }
+
+    function actualizarNotificaciones() {
+        if (friends !== undefined) {
+            $.ajax({
+                url: URLbase + "/chat/last",
+                type: "GET",
+                data: {},
+                dataType: 'json',
+                headers: {"token": token},
+                success: function (respuesta) {
+                    let sinLeer = respuesta.sinLeer;
+
+                    if (sinLeer !== notificaciones) {
+                        notificaciones = sinLeer;
+                        cargarAmigos();
+                    }
+                },
+                error: function (error) {
+                    $("#contenedor-principal").load("widget-login.html");
+                }
+            });
+        }
+    }
+
+    cargarAmigos();
 
     // Cada segundo se actualizan los amigos
     setInterval(function () {
-        cargarAmigos();
-    }, 1000);
+        actualizarNotificaciones();
+    }, 8000);
 
 </script>
