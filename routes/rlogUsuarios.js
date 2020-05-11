@@ -12,15 +12,15 @@ module.exports = function (app, swig, gestorBD) {
      */
     app.post('/usuario', function (req, res) {
         // Comprobamos que las contraseñas coincidan
-        if (req.body.password != req.body.passwordConfirm) {
+        if (req.body.password !== req.body.passwordConfirm) {
             res.redirect("/registrarse?mensaje=Las contraseñas no coinciden&tipoMensaje=alert-danger");
         } else {
             // Comprobamos que el email no se encuentre registrado
             let criterio = {
                 email: req.body.email
             };
-            gestorBD.obtenerUsuarios(criterio, function (usuario) {
-                if (usuario.length != 0) {
+            gestorBD.obtenerElementos('usuarios', criterio, function (usuario) {
+                if (usuario.length !== 0) {
                     res.redirect("/registrarse?mensaje=El email ya está en uso&tipoMensaje=alert-danger");
                 } else {
                     // Encriptación de la contraseña
@@ -35,7 +35,7 @@ module.exports = function (app, swig, gestorBD) {
                         rol: "estandar"
                     };
                     // Insertamos el usuario
-                    gestorBD.insertarUsuario(usuario, function (id) {
+                    gestorBD.insertarElementos('usuarios', usuario, function (id) {
                         if (id == null) {
                             res.redirect("/registrarse?mensaje=Error al registrar usuario&tipoMensaje=alert-danger");
                         } else {
@@ -66,8 +66,8 @@ module.exports = function (app, swig, gestorBD) {
             email: req.body.email,
             password: seguro
         };
-        gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            if (usuarios == null || usuarios.length == 0) {
+        gestorBD.obtenerElementos('usuarios', criterio, function (usuarios) {
+            if (usuarios == null || usuarios.length === 0) {
                 req.session.usuario = null;
                 res.redirect("/identificarse" +
                     "?mensaje=Email o password incorrecto" +

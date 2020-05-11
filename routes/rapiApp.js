@@ -46,13 +46,13 @@ module.exports = function (app, gestorBD) {
     });
 
     /**
-     * S2 - Lista de amigos
+     * S2 - Lista de amigos y horas de últimos mensajes en los chats
      */
     app.get("/api/friends", function (req, res) {
         let criterio = {
             $and: [{$or: [{friend1: res.usuario}, {friend2: res.usuario}]}]
         };
-        gestorBD.obtenerAmistades(criterio, function (amistades) {
+        gestorBD.obtenerElementos('friends', criterio, function (amistades) {
             if (amistades == null) {
                 res.status(500);
                 res.json({
@@ -61,14 +61,14 @@ module.exports = function (app, gestorBD) {
             } else {
                 let amigos = [];
                 for (let i = 0; i < amistades.length; i++) {
-                    if (amistades[i].friend1 == res.usuario)
+                    if (amistades[i].friend1 === res.usuario)
                         amigos.push(amistades[i].friend2);
                     else
                         amigos.push(amistades[i].friend1);
                 }
 
-                var criterio2 = {email: {$in: amigos}};
-                gestorBD.obtenerUsuarios(criterio2, function (usuarios) {
+                let criterio2 = {email: {$in: amigos}};
+                gestorBD.obtenerElementos('usuarios', criterio2, function (usuarios) {
                     if (usuarios == null) {
                         res.status(500);
                         res.json({
@@ -120,7 +120,7 @@ module.exports = function (app, gestorBD) {
                 ]
             };
             // Comprobamos que son amigos
-            gestorBD.obtenerAmistades(criterio, function (friends) {
+            gestorBD.obtenerElementos('friends', criterio, function (friends) {
                 if (friends == null || friends.length === 0) {
                     res.status(500);
                     res.json({
@@ -136,7 +136,7 @@ module.exports = function (app, gestorBD) {
                         fecha: new Date(),
                         leido: false
                     };
-                    gestorBD.insertarMensaje(mensaje, function (result) {
+                    gestorBD.insertarElementos('chats', mensaje, function (result) {
                         res.status(200);
                         res.json({
                             mensaje: "Mensaje " + result + " insertado"
@@ -166,7 +166,7 @@ module.exports = function (app, gestorBD) {
                 ]
             };
             // Comprobamos que son amigos
-            gestorBD.obtenerAmistades(criterio, function (friends) {
+            gestorBD.obtenerElementos('friends', criterio, function (friends) {
                 if (friends == null || friends.length === 0) {
                     res.status(500);
                     res.json({
@@ -233,7 +233,6 @@ module.exports = function (app, gestorBD) {
                             res.json({
                                 mensaje: "Mensaje modificado"
                             });
-                            //res.send(JSON.stringify(friends[0].chat));
                         }
                     });
                 }
