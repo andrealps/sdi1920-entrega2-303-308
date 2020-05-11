@@ -476,10 +476,19 @@ public class Tests {
 		PO_View.checkElement(driver, "id", "loginUsuarios");
 	}
 
-	// PR23. Sin hacer /
+	/*
+	 * [Prueba23] Inicio de sesión con datos válidos.
+	 */
 	@Test
 	public void PR23() {
-		assertTrue("PR23 sin hacer", false);
+		// Intentamos acceder al listado de usuarios
+		driver.navigate().to("https://localhost:8081/cliente.html");
+		// Comprobamos que nos redirige a la página de inicio de sesión
+		PO_View.checkElement(driver, "id", "email");
+		// Rellenamos el formulario
+		PO_LoginView.fillForm(driver, "ejemplo1@gmail.com", "1234");
+		// Comprobamos que nos redirige al chat
+		PO_View.checkElement(driver, "id", "people-list");
 	}
 
 	// PR24. Sin hacer /

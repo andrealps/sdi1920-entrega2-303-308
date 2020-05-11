@@ -1,5 +1,7 @@
-<div class="people-list" id="people-list">
 
+<div id="errores"></div>
+
+<div class="people-list" id="people-list">
     <!-- Búsqueda por nombre -->
     <div class="search">
         <label>
@@ -29,12 +31,17 @@
             dataType: 'json',
             headers: {"token": token},
             success: function (respuesta) {
-                friends = respuesta.friends;
-                ordenarAmigos(friends, respuesta.ultsMensajes);
-                actualizarLista(friends);
-            },
-            error: function (error) {
+                if(respuesta.friends.length == 0) {
+                    $("#contenedor-principal").prepend("<div class='alert alert-danger'>¡No tienes amigos para chatear!</div>");
+                }
+                else {
+                    friends = respuesta.friends;
+                    ordenarAmigos(friends, respuesta.ultsMensajes);
+                    actualizarLista(friends);
+                }
+            },error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");
+
             }
         });
     }
