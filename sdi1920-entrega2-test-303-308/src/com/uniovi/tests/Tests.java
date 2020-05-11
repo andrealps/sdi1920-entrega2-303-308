@@ -5,6 +5,8 @@ import java.util.List;
 //Paquetes JUnit 
 import org.junit.*;
 import org.junit.runners.MethodSorters;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 //Paquetes Selenium 
@@ -23,9 +25,8 @@ public class Tests {
 	// En Windows (Debe ser la versión 65.0.1 y desactivar las actualizaciones
 	// automáticas)):
 	static String PathFirefox65 = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
-	static String Geckdriver024 = "C:\\Users\\SARA\\Desktop\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
-	// static String Geckdriver024 = "D:\\UNIVERSIDAD\\Tercer
-	// curso\\SDI\\material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
+	//static String Geckdriver024 = "C:\\Users\\SARA\\Desktop\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
+	static String Geckdriver024 = "D:\\UNIVERSIDAD\\Tercer curso\\SDI\\material\\PL-SDI-Sesión5-material\\geckodriver024win64.exe";
 
 	static WebDriver driver = getDriver(PathFirefox65, Geckdriver024);
 	static String URL = "https://localhost:8081";
@@ -52,7 +53,7 @@ public class Tests {
 	static public void begin() {
 		// Configuramos las pruebas.
 		// Fijamos el timeout en cada opción de carga de una vista. 2 segundos.
-		PO_View.setTimeout(2);
+		PO_View.setTimeout(20);
 		driver.navigate().to(URLreiniciarBD);
 	}
 
@@ -60,6 +61,10 @@ public class Tests {
 	static public void end() {
 		// Cerramos el navegador al finalizar las pruebas
 		// driver.quit();
+	}
+	
+	public void goToAPI() {
+		driver.navigate().to(URL + "/cliente.html");
 	}
 
 	/**
@@ -220,7 +225,7 @@ public class Tests {
 		elementos = PO_View.checkElement(driver, "free", "//a[contains(@class, 'page-link')]");
 		elementos.get(1).click();
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
-		assertTrue(elementos.size() == 2);
+		assertTrue(elementos.size() == 3);
 		// Nos desconectamos
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
@@ -243,7 +248,7 @@ public class Tests {
 		elementos = PO_View.checkElement(driver, "free", "//a[contains(@class, 'page-link')]");
 		elementos.get(1).click();
 		elementos = SeleniumUtils.EsperaCargaPagina(driver, "free", "//tbody/tr", PO_View.getTimeout());
-		assertTrue(elementos.size() == 2);
+		assertTrue(elementos.size() == 3);
 		// Nos desconectamos
 		PO_HomeView.clickOption(driver, "desconectarse", "class", "btn btn-primary");
 	}
@@ -494,10 +499,21 @@ public class Tests {
 		assertTrue("PR26 sin hacer", false);
 	}
 
-	// PR27. Sin hacer /
+	/*
+	 * Prueba27] Acceder a la lista de mensajes de un amigo “chat”, la lista debe contener al menos tres mensajes.
+	 */
 	@Test
 	public void PR27() {
-		assertTrue("PR27 sin hacer", false);
+		// Vamos a la URL de la API
+		goToAPI();
+		// Nos logueamos y comprobamos que vemos la lista de amigos
+		PO_PrivateView.loginAPI(driver, "ejemplo5@gmail.com", "1234");
+		// Entramos en el chat con el usuario ejemplo6@gmail.com
+		List<WebElement> elementos = PO_View.checkElement(driver, "free", "//div[contains(@id, 'dataFriend_0')]//a[contains(@class, 'infoFriend')]");
+		elementos.get(0).click();
+		// Comprobamos que hay 3 mensajes
+		elementos = PO_View.checkElement(driver, "free", "//span[contains(@class, 'message-data-time')]");
+		assertTrue(elementos.size() == 3);
 	}
 
 	// PR029. Sin hacer /

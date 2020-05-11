@@ -21,6 +21,20 @@ public class PO_PrivateView extends PO_NavView {
 		// Comprobamos que nos redirige al listado de usuarios
 		PO_View.checkElement(driver, "id", "listaUsuarios");
 	}
+	
+	/**
+	 * Inicia la sesión de un usuario en la parte de servicios web
+	 * 
+	 * @param driver
+	 * @param email
+	 * @param pass
+	 */
+	static public void loginAPI(WebDriver driver, String email, String pass) {
+		// Rellenamos el formulario.
+		PO_LoginView.fillForm(driver, email, pass);
+		// Comprobamos que nos redirige al listado de amigos
+		PO_View.checkElement(driver, "id", "people-list");
+	}
 
 	/**
 	 * Realiza una búsqueda en la lista de usuarios de la aplicación
@@ -36,5 +50,7 @@ public class PO_PrivateView extends PO_NavView {
 		By boton = By.id("btnSearch");
 		driver.findElement(boton).click();
 	}
+	
+	
 
 }

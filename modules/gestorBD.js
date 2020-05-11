@@ -262,6 +262,41 @@ module.exports = {
             }
         });
     },
+    eliminarElementos: function (nombreColeccion, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection(nombreColeccion);
+                collection.remove({}, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    insertarElementos: function (nombreColeccion, elementos, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                let collection = db.collection(nombreColeccion);
+                collection.insert(elementos, function (err, result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
     obtenerUltimoMensaje: function (amigos, usuario, funcionCallback) {
         this.mongo.MongoClient.connect(this.app.get('db'), function (err, db) {
             if (err) {

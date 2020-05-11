@@ -40,7 +40,6 @@
     }
 
     function ordenarAmigos(friends, ultsMensajes) {
-        console.log("aqui");
         for (let i = 0; i < friends.length; i++) {
             for (let j = 0; j < ultsMensajes.length; j++) {
                 if (friends[i].email === ultsMensajes[j]._id.emisor || friends[i].email === ultsMensajes[j]._id.receptor) {
